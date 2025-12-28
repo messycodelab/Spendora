@@ -116,9 +116,9 @@ export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerP
           </Button>
         </form>
 
-        <div className="lg:col-span-2 grid md:grid-cols-2 gap-4 auto-rows-min">
+        <div className="lg:col-span-2 space-y-3">
           {currentMonthBudgets.length === 0 ? (
-            <div className="md:col-span-2 text-center py-16 bg-white/50 rounded-[2rem] border-2 border-dashed border-slate-100">
+            <div className="text-center py-16 bg-white/50 rounded-[2rem] border-2 border-dashed border-slate-100">
               <div className="bg-white h-16 w-16 rounded-3xl flex items-center justify-center shadow-sm mx-auto mb-4">
                 <Target className="h-8 w-8 text-slate-100" />
               </div>
@@ -134,21 +134,23 @@ export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerP
               return (
                 <div
                   key={budget.id}
-                  className="p-5 bg-white rounded-[2rem] border border-slate-50 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
+                  className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg shrink-0`}>
-                        <CheckCircle2 className="h-4.5 w-4.5" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`h-8 w-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm shrink-0`}>
+                        <CheckCircle2 className="h-4 w-4" />
                       </div>
-                      <h4 className="font-bold text-slate-800 text-sm truncate max-w-[100px]">{budget.category}</h4>
+                      <h4 className="font-bold text-slate-800 text-sm">{budget.category}</h4>
                     </div>
-                    <span className={`font-black text-lg ${statusColor} tracking-tighter`}>
-                      {percentage.toFixed(0)}%
-                    </span>
+                    <div className="text-right">
+                      <span className={`font-black text-sm ${statusColor} tracking-tighter`}>
+                        {percentage.toFixed(0)}%
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="relative h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`absolute left-0 top-0 h-full bg-gradient-to-r ${gradient} transition-all duration-1000 ease-out rounded-full`}
@@ -156,19 +158,16 @@ export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerP
                       />
                     </div>
                     
-                    <div className="flex justify-between items-end">
-                      <div className="space-y-0.5">
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Left</p>
-                        <p className={`text-sm font-bold ${statusColor} tracking-tight`}>
-                          {formatCurrency(Math.max(0, budget.monthlyLimit - currentSpend))}
-                        </p>
+                    <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                      <div className="flex gap-4">
+                        <span className="text-slate-400">Spent: <span className="text-slate-600">{formatCurrency(currentSpend)}</span></span>
+                        <span className="text-slate-400">Limit: <span className="text-slate-600">{formatCurrency(budget.monthlyLimit)}</span></span>
                       </div>
-                      <div className="text-right space-y-0.5">
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Limit</p>
-                        <p className="text-[11px] font-bold text-slate-600 tracking-tight">
-                          {formatCurrency(budget.monthlyLimit)}
-                        </p>
-                      </div>
+                      <span className={statusColor}>
+                        {budget.monthlyLimit - currentSpend > 0 
+                          ? `${formatCurrency(budget.monthlyLimit - currentSpend)} left`
+                          : 'Over budget'}
+                      </span>
                     </div>
                   </div>
                 </div>

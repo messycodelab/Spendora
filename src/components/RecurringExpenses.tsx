@@ -142,9 +142,9 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 					</div>
 				</div>
 
-				<div className="lg:col-span-2 grid md:grid-cols-2 gap-4 auto-rows-min">
+				<div className="lg:col-span-2 space-y-3">
 					{recurringExpenses.length === 0 ? (
-						<div className="md:col-span-2 text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
+						<div className="text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
 							<div className="bg-white h-16 w-16 rounded-3xl flex items-center justify-center shadow-sm mx-auto mb-4">
 								<Clock className="h-8 w-8 text-slate-100" />
 							</div>
@@ -167,63 +167,60 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 							return (
 								<div
 									key={expense.id}
-									className="p-5 bg-white rounded-[2rem] border border-slate-50 shadow-sm hover:shadow-md transition-all duration-300 group"
+									className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:bg-slate-50 transition-all duration-200 group"
 								>
-									<div className="flex items-start justify-between gap-4">
-										<div className="flex gap-4 min-w-0 flex-1">
-											{/* Icon Group */}
-											<div className="relative shrink-0 h-fit">
-												<div
-													className={`h-12 w-12 rounded-xl bg-gradient-to-br ${categoryInfo.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500`}
-												>
-													<CategoryIcon className="h-5 w-5" />
-												</div>
-												<div
-													className={`absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-br ${frequencyGradient} flex items-center justify-center border-2 border-white shadow-sm`}
-												>
-													<Repeat className="h-2.5 w-2.5 text-white" />
-												</div>
-											</div>
-
-											{/* Details Group */}
-											<div className="min-w-0 flex-1 flex flex-col justify-center">
-												<h4 className="font-bold text-slate-800 text-base mb-1 truncate">
-													{expense.description}
-												</h4>
-
-												<div className="flex flex-wrap items-center gap-2">
-													<span
-														className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${categoryInfo.bg} ${categoryInfo.text} whitespace-nowrap`}
-													>
-														{expense.category}
-													</span>
-													<span
-														className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 whitespace-nowrap`}
-													>
-														{frequency}
-													</span>
-												</div>
-
-												<div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wide">
-													<Calendar className="h-2.5 w-2.5" />
-													<span className="whitespace-nowrap">
-														{formatDate(
-															expense.recurringDetails?.nextDate || "",
-														)}
-													</span>
-												</div>
-											</div>
+									{/* Icon Group */}
+									<div className="relative shrink-0">
+										<div
+											className={`h-10 w-10 rounded-xl bg-gradient-to-br ${categoryInfo.color} flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform duration-300`}
+										>
+											<CategoryIcon className="h-4 w-4" />
 										</div>
-
-										{/* Amount Group */}
-										<div className="text-right shrink-0">
-											<div className="text-xl font-black text-slate-900 tracking-tighter">
-												{formatCurrency(expense.amount)}
-											</div>
-											<p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-												per cycle
-											</p>
+										<div
+											className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-gradient-to-br ${frequencyGradient} flex items-center justify-center border-2 border-white`}
+										>
+											<Repeat className="h-2 w-2 text-white" />
 										</div>
+									</div>
+
+									{/* Details Group */}
+									<div className="min-w-0 flex-1">
+										<h4 className="font-bold text-slate-800 text-sm truncate leading-tight">
+											{expense.description}
+										</h4>
+										<div className="flex items-center gap-2 mt-1">
+											<span
+												className={`text-[9px] font-bold uppercase tracking-wider ${categoryInfo.text}`}
+											>
+												{expense.category}
+											</span>
+											<span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+												{frequency}
+											</span>
+										</div>
+									</div>
+
+									{/* Next Payment */}
+									<div className="hidden sm:flex flex-col items-center px-4 border-x border-slate-100">
+										<span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+											Next Payment
+										</span>
+										<div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600">
+											<Calendar className="h-2.5 w-2.5" />
+											<span>
+												{formatDate(expense.recurringDetails?.nextDate || "")}
+											</span>
+										</div>
+									</div>
+
+									{/* Amount Group */}
+									<div className="text-right shrink-0 min-w-[100px]">
+										<div className="text-base font-black text-slate-900 leading-tight">
+											{formatCurrency(expense.amount)}
+										</div>
+										<p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+											per cycle
+										</p>
 									</div>
 								</div>
 							);

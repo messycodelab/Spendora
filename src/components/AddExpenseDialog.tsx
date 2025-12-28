@@ -31,6 +31,7 @@ import {
 	FileText,
 	CreditCard,
 	Repeat,
+	Calendar,
 } from "lucide-react";
 
 interface AddExpenseDialogProps {
@@ -42,6 +43,7 @@ export function AddExpenseDialog({ onAddExpense }: AddExpenseDialogProps) {
 	const [amount, setAmount] = useState("");
 	const [category, setCategory] = useState("");
 	const [description, setDescription] = useState("");
+	const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 	const [paymentMethod, setPaymentMethod] = useState<"upi" | "cash" | "card">(
 		"upi",
 	);
@@ -58,19 +60,18 @@ export function AddExpenseDialog({ onAddExpense }: AddExpenseDialogProps) {
 			return;
 		}
 
-		const now = new Date().toISOString();
 		const expense: Expense = {
 			id: crypto.randomUUID(),
 			amount: parseFloat(amount),
 			category,
 			description,
-			date: now,
+			date: new Date(date).toISOString(),
 			paymentMethod,
 			type,
 		};
 
 		if (type === "recurring") {
-			const nextDate = new Date();
+			const nextDate = new Date(date);
 			if (frequency === "daily") nextDate.setDate(nextDate.getDate() + 1);
 			if (frequency === "weekly") nextDate.setDate(nextDate.getDate() + 7);
 			if (frequency === "monthly") nextDate.setMonth(nextDate.getMonth() + 1);
@@ -92,6 +93,7 @@ export function AddExpenseDialog({ onAddExpense }: AddExpenseDialogProps) {
 		setAmount("");
 		setCategory("");
 		setDescription("");
+		setDate(new Date().toISOString().slice(0, 10));
 		setPaymentMethod("upi");
 		setType("one-time");
 		setFrequency("monthly");
@@ -181,31 +183,51 @@ export function AddExpenseDialog({ onAddExpense }: AddExpenseDialogProps) {
 							/>
 						</div>
 
-						<div className="grid gap-2">
-							<Label
-								htmlFor="paymentMethod"
-								className="flex items-center gap-2 text-purple-900"
-							>
-								<CreditCard className="h-4 w-4" />
-								Payment Method
-							</Label>
-							<Select
-								value={paymentMethod}
-								onValueChange={(v) =>
-									setPaymentMethod(v as "upi" | "cash" | "card")
-								}
-							>
-								<SelectTrigger className="border-2 focus:border-purple-500">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									{PAYMENT_METHODS.map((method) => (
-										<SelectItem key={method} value={method}>
-											{method.toUpperCase()}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+						<div className="grid grid-cols-2 gap-4">
+							<div className="grid gap-2">
+								<Label
+									htmlFor="date"
+									className="flex items-center gap-2 text-purple-900"
+								>
+									<Calendar className="h-4 w-4" />
+									Date
+								</Label>
+								<Input
+									id="date"
+									type="date"
+									value={date}
+									onChange={(e) => setDate(e.target.value)}
+									required
+									className="border-2 focus:border-purple-500"
+								/>
+							</div>
+
+							<div className="grid gap-2">
+								<Label
+									htmlFor="paymentMethod"
+									className="flex items-center gap-2 text-purple-900"
+								>
+									<CreditCard className="h-4 w-4" />
+									Payment Method
+								</Label>
+								<Select
+									value={paymentMethod}
+									onValueChange={(v) =>
+										setPaymentMethod(v as "upi" | "cash" | "card")
+									}
+								>
+									<SelectTrigger className="border-2 focus:border-purple-500">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{PAYMENT_METHODS.map((method) => (
+											<SelectItem key={method} value={method}>
+												{method.toUpperCase()}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
 						</div>
 
 						<div className="grid gap-2">
