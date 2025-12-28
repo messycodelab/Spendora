@@ -52,6 +52,15 @@ A fully functional **Electron desktop application** for expense tracking with a 
 - ✅ Category and date display
 - ✅ Formatted currency (INR)
 
+### 6. 🏦 Loans & Liabilities Tracking
+- ✅ Track multiple loan types (Home, Car, Personal, etc.)
+- ✅ Automatic EMI calculation using built-in calculator
+- ✅ Track Principal and Interest (P&I) split for every payment
+- ✅ Visual repayment progress bars
+- ✅ Automatic next EMI date tracking
+- ✅ Total monthly debt obligation snapshot
+- ✅ Debt-to-Equity ratio visualization
+
 ## 🛠️ Technology Stack
 
 | Component | Technology |
@@ -62,10 +71,11 @@ A fully functional **Electron desktop application** for expense tracking with a 
 | Build Tool | **Vite 5** |
 | UI Components | **shadcn/ui** |
 | Styling | **Tailwind CSS** |
-| Component Library | **Radix UI** |
+| Database | **SQLite** |
+| ORM | **Drizzle ORM** |
 | Icons | **Lucide React** |
 | State Management | **React Hooks** |
-| Data Storage | **Local JSON File** |
+| Data Storage | **Better-SQLite3** |
 
 ## 📁 Project Structure
 
