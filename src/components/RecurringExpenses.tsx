@@ -1,10 +1,23 @@
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { type Expense } from '@/types'
-import { Calendar, Repeat, Clock, TrendingUp } from 'lucide-react'
+import { Calendar, Repeat, Clock, TrendingUp, UtensilsCrossed, Car, ShoppingBag, Film, Lightbulb, Heart, GraduationCap, Home, Tv, MoreHorizontal } from 'lucide-react'
 
 interface RecurringExpensesProps {
   expenses: Expense[]
 }
+
+const categoryConfig = {
+  'Food & Dining': { icon: UtensilsCrossed, color: 'from-orange-400 to-red-500', bg: 'bg-orange-50', text: 'text-orange-600' },
+  'Transportation': { icon: Car, color: 'from-blue-400 to-blue-600', bg: 'bg-blue-50', text: 'text-blue-600' },
+  'Shopping': { icon: ShoppingBag, color: 'from-pink-400 to-purple-500', bg: 'bg-pink-50', text: 'text-pink-600' },
+  'Entertainment': { icon: Film, color: 'from-purple-400 to-indigo-500', bg: 'bg-purple-50', text: 'text-purple-600' },
+  'Bills & Utilities': { icon: Lightbulb, color: 'from-yellow-400 to-orange-500', bg: 'bg-yellow-50', text: 'text-yellow-600' },
+  'Healthcare': { icon: Heart, color: 'from-red-400 to-pink-500', bg: 'bg-red-100', text: 'text-red-600' },
+  'Education': { icon: GraduationCap, color: 'from-green-400 to-teal-500', bg: 'bg-green-50', text: 'text-green-600' },
+  'Rent': { icon: Home, color: 'from-cyan-400 to-blue-500', bg: 'bg-cyan-50', text: 'text-cyan-600' },
+  'Subscriptions': { icon: Tv, color: 'from-indigo-400 to-purple-500', bg: 'bg-indigo-50', text: 'text-indigo-600' },
+  'Others': { icon: MoreHorizontal, color: 'from-gray-400 to-gray-600', bg: 'bg-gray-50', text: 'text-gray-600' },
+} as const
 
 export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
   const recurringExpenses = expenses.filter((e) => e.type === 'recurring')
@@ -69,7 +82,9 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
           ) : (
             recurringExpenses.map((expense) => {
               const frequency = expense.recurringDetails?.frequency || 'monthly'
-              const gradient = frequencyColors[frequency as keyof typeof frequencyColors]
+              const frequencyGradient = frequencyColors[frequency as keyof typeof frequencyColors]
+              const categoryInfo = categoryConfig[expense.category as keyof typeof categoryConfig] || categoryConfig['Others']
+              const CategoryIcon = categoryInfo.icon
               
               return (
                 <div
@@ -77,28 +92,45 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
                   className="p-5 bg-white rounded-[2rem] border border-slate-50 shadow-sm hover:shadow-md transition-all duration-300 group"
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex gap-3 min-w-0">
-                      <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg shrink-0 group-hover:rotate-12 transition-transform duration-500`}>
-                        <Repeat className="h-4.5 w-4.5" />
+                    <div className="flex gap-4 min-w-0 flex-1">
+                      {/* Icon Group */}
+                      <div className="relative shrink-0 h-fit">
+                        <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${categoryInfo.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                          <CategoryIcon className="h-5 w-5" />
+                        </div>
+                        <div className={`absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-br ${frequencyGradient} flex items-center justify-center border-2 border-white shadow-sm`}>
+                          <Repeat className="h-2.5 w-2.5 text-white" />
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <h4 className="font-bold text-slate-800 text-sm mb-1 truncate">{expense.description}</h4>
-                        <div className="flex flex-col gap-1">
-                          <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 inline-block w-fit`}>
+
+                      {/* Details Group */}
+                      <div className="min-w-0 flex-1 flex flex-col justify-center">
+                        <h4 className="font-bold text-slate-800 text-base mb-1 truncate">{expense.description}</h4>
+                        
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${categoryInfo.bg} ${categoryInfo.text} whitespace-nowrap`}>
+                            {expense.category}
+                          </span>
+                          <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 whitespace-nowrap`}>
                             {frequency}
                           </span>
-                          <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-wide truncate">
-                            <Calendar className="h-2.5 w-2.5" />
-                            {formatDate(expense.recurringDetails?.nextDate || '')}
-                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                          <Calendar className="h-2.5 w-2.5" />
+                          <span className="whitespace-nowrap">{formatDate(expense.recurringDetails?.nextDate || '')}</span>
                         </div>
                       </div>
                     </div>
                     
+                    {/* Amount Group */}
                     <div className="text-right shrink-0">
-                      <div className="text-lg font-black text-slate-900 tracking-tighter">
+                      <div className="text-xl font-black text-slate-900 tracking-tighter">
                         {formatCurrency(expense.amount)}
                       </div>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        per cycle
+                      </p>
                     </div>
                   </div>
                 </div>
