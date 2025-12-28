@@ -68,7 +68,7 @@ function createWindow() {
 
 	if (isDev) {
 		mainWindow.loadURL("http://localhost:5173");
-		mainWindow.webContents.openDevTools();
+		// DevTools can be opened manually with Cmd+Option+I (Mac) or Ctrl+Shift+I (Windows/Linux)
 	} else {
 		mainWindow.loadFile(path.join(__dirname, "index.html"));
 	}
