@@ -101,7 +101,7 @@ export function AddExpenseDialog({ onAddExpense }: AddExpenseDialogProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
+			<DialogTrigger asChild data-add-expense-trigger>
 				<Button className="gap-2 gradient-purple shadow-lg hover:shadow-xl transition-all text-white">
 					<Plus className="h-5 w-5" />
 					Add Expense
