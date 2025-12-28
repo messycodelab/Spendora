@@ -33,9 +33,9 @@ export function LoanCard({ loan, onDelete, onAddPayment }: LoanCardProps) {
             variant="ghost"
             size="icon"
             onClick={() => onDelete(loan.id)}
-            className="h-8 w-8 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+            className="h-7 w-7 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
