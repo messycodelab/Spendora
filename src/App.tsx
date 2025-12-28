@@ -8,7 +8,7 @@ import { Dashboard } from "./components/Dashboard";
 import { LoansLiabilities } from "./components/LoansLiabilities/LoansLiabilities";
 import type { Expense, Budget, Loan, LoanPayment } from "./types";
 import { normalizeExpense, toStorageFormat } from "./lib/expense-adapter";
-import { Wallet } from "lucide-react";
+import { Search, Settings, Bell, HelpCircle, Plus } from "lucide-react";
 
 declare global {
 	interface Window {
@@ -86,35 +86,82 @@ function App() {
 
 	if (loading) {
 		return (
-			<div className="h-screen flex items-center justify-center">
+			<div className="h-screen flex items-center justify-center bg-slate-50">
 				<div className="text-center">
-					<Wallet className="h-12 w-12 text-primary mx-auto mb-4 animate-pulse" />
-					<p className="text-muted-foreground">Loading Spendora...</p>
+					<h1 className="text-4xl font-black text-slate-900 tracking-tighter mb-2 animate-pulse">
+						Spendora
+					</h1>
+					<p className="text-slate-400 font-bold tracking-widest text-[10px] uppercase">
+						Launching...
+					</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen pb-12 bg-slate-50/30">
-			<div className="container mx-auto p-6 max-w-6xl">
-				{/* Modern Integrated Header */}
-				<header className="flex items-center justify-between mb-10 px-2">
-					<div className="flex items-center gap-4">
-						<div className="w-12 h-12 rounded-2xl gradient-purple flex items-center justify-center shadow-indigo-200 shadow-xl">
-							<Wallet className="h-6 w-6 text-white" />
+		<div className="min-h-screen pb-12 bg-white">
+			<nav className="h-12 bg-[#062163] flex items-center justify-between px-4 text-white sticky top-0 z-50">
+				<div className="flex items-center gap-6">
+					<div className="flex items-center gap-2">
+						<h1 className="text-lg font-bold tracking-tight">Spendora</h1>
+					</div>
+				</div>
+
+				<div className="flex-1 max-w-xl px-8">
+					<div className="relative group">
+						<div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+							<Search className="h-3.5 w-3.5 text-white/50" />
 						</div>
-						<div>
-							<h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-								Spendora
-							</h1>
-							<p className="text-slate-400 text-sm font-medium">
-								Personal Finance Hub
-							</p>
+						<input
+							type="text"
+							placeholder="Search"
+							className="w-full h-8 bg-white/10 border-none rounded-md pl-9 pr-12 text-xs text-white placeholder:text-white/40 focus:bg-white/20 focus:ring-0 transition-all"
+						/>
+						<div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+							<div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-white/10 rounded border border-white/10">
+								<span className="text-[10px] text-white/60">⌘</span>
+								<span className="text-[10px] text-white/60 font-bold">K</span>
+							</div>
 						</div>
 					</div>
+				</div>
+
+				<div className="flex items-center gap-4">
+					<div className="flex items-center gap-3 pr-2">
+						<HelpCircle className="h-4 w-4 text-white/70 hover:text-white cursor-pointer" />
+						<div className="relative">
+							<Bell className="h-4 w-4 text-white/70 hover:text-white cursor-pointer" />
+							<div className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full flex items-center justify-center border-2 border-[#062163]">
+								<span className="text-[7px] font-bold text-white">2</span>
+							</div>
+						</div>
+						<Settings className="h-4 w-4 text-white/70 hover:text-white cursor-pointer" />
+					</div>
+				</div>
+			</nav>
+
+			<div className="container mx-auto p-6 max-w-6xl">
+				{/* Floating Action Button */}
+				<button
+					type="button"
+					onClick={() =>
+						(
+							document.querySelector(
+								"[data-add-expense-trigger]",
+							) as HTMLElement
+						)?.click()
+					}
+					className="fixed bottom-8 right-8 h-12 px-6 bg-[#062163] text-white rounded-full shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all z-50 group font-bold text-sm"
+				>
+					<Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
+					<span>Add Expense</span>
+				</button>
+
+				{/* Hidden AddExpenseDialog trigger for navbar button */}
+				<div className="hidden">
 					<AddExpenseDialog onAddExpense={handleAddExpense} />
-				</header>
+				</div>
 
 				<section className="mb-10">
 					<Dashboard expenses={expenses} budgets={budgets} />
