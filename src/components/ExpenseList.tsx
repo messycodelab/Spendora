@@ -1,8 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { type Expense } from '@/types'
-import { Trash2, CreditCard, Banknote, Smartphone, Repeat } from 'lucide-react'
+import { 
+  Trash2, 
+  CreditCard, 
+  Banknote, 
+  Smartphone, 
+  Repeat,
+  UtensilsCrossed,
+  Car,
+  ShoppingBag,
+  Film,
+  Lightbulb,
+  Heart,
+  GraduationCap,
+  Home,
+  Tv,
+  MoreHorizontal,
+  Receipt
+} from 'lucide-react'
 
 interface ExpenseListProps {
   expenses: Expense[]
@@ -15,74 +31,102 @@ const paymentIcons = {
   card: CreditCard,
 }
 
+const categoryConfig = {
+  'Food & Dining': { icon: UtensilsCrossed, color: 'from-orange-400 to-red-500', bg: 'bg-orange-50', text: 'text-orange-600' },
+  'Transportation': { icon: Car, color: 'from-blue-400 to-blue-600', bg: 'bg-blue-50', text: 'text-blue-600' },
+  'Shopping': { icon: ShoppingBag, color: 'from-pink-400 to-purple-500', bg: 'bg-pink-50', text: 'text-pink-600' },
+  'Entertainment': { icon: Film, color: 'from-purple-400 to-indigo-500', bg: 'bg-purple-50', text: 'text-purple-600' },
+  'Bills & Utilities': { icon: Lightbulb, color: 'from-yellow-400 to-orange-500', bg: 'bg-yellow-50', text: 'text-yellow-600' },
+  'Healthcare': { icon: Heart, color: 'from-red-400 to-pink-500', bg: 'bg-red-50', text: 'text-red-600' },
+  'Education': { icon: GraduationCap, color: 'from-green-400 to-teal-500', bg: 'bg-green-50', text: 'text-green-600' },
+  'Rent': { icon: Home, color: 'from-cyan-400 to-blue-500', bg: 'bg-cyan-50', text: 'text-cyan-600' },
+  'Subscriptions': { icon: Tv, color: 'from-indigo-400 to-purple-500', bg: 'bg-indigo-50', text: 'text-indigo-600' },
+  'Others': { icon: MoreHorizontal, color: 'from-gray-400 to-gray-600', bg: 'bg-gray-50', text: 'text-gray-600' },
+} as const
+
 export function ExpenseList({ expenses, onDeleteExpense }: ExpenseListProps) {
   const sortedExpenses = [...expenses].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   )
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Expenses</CardTitle>
-        <CardDescription>
-          Your latest transactions
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {sortedExpenses.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
-              No expenses recorded yet. Add your first expense!
+    <div className="space-y-6">
+      <div className="flex items-center justify-between px-2">
+        <div>
+          <h2 className="text-lg font-bold text-slate-900">Recent Transactions</h2>
+          <p className="text-xs text-slate-400 font-medium">Monitoring your latest activities</p>
+        </div>
+        <Receipt className="h-5 w-5 text-slate-300" />
+      </div>
+
+      <div className="space-y-3">
+        {sortedExpenses.length === 0 ? (
+          <div className="text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
+            <div className="bg-white h-16 w-16 rounded-3xl flex items-center justify-center shadow-sm mx-auto mb-4">
+              <Receipt className="h-8 w-8 text-slate-200" />
+            </div>
+            <p className="text-slate-400 text-sm font-medium">
+              No transactions found
             </p>
-          ) : (
-            sortedExpenses.map((expense) => {
-              const PaymentIcon = paymentIcons[expense.paymentMethod]
-              return (
-                <div
-                  key={expense.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex items-start gap-3 flex-1">
-                    <div className="mt-1">
-                      <PaymentIcon className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">{expense.description}</h4>
-                        {expense.type === 'recurring' && (
-                          <Repeat className="h-4 w-4 text-primary" />
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {expense.category} • {formatDate(expense.date)}
-                      </p>
-                      {expense.type === 'recurring' && expense.recurringDetails && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Repeats {expense.recurringDetails.frequency}
-                        </p>
+          </div>
+        ) : (
+          sortedExpenses.map((expense) => {
+            const PaymentIcon = paymentIcons[expense.paymentMethod]
+            const categoryInfo = categoryConfig[expense.category as keyof typeof categoryConfig] || categoryConfig['Others']
+            const CategoryIcon = categoryInfo.icon
+            
+            return (
+              <div
+                key={expense.id}
+                className="flex items-center justify-between p-4 bg-white/50 hover:bg-white rounded-2xl transition-all duration-300 group hover:shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-transparent hover:border-slate-100"
+              >
+                <div className="flex items-center gap-4 flex-1">
+                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${categoryInfo.color} shadow-lg shadow-slate-100 group-hover:scale-110 transition-transform duration-500`}>
+                    <CategoryIcon className="h-5 w-5 text-white" />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h4 className="font-bold text-slate-800 truncate">{expense.description}</h4>
+                      {expense.type === 'recurring' && (
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-indigo-50 rounded-full">
+                          <Repeat className="h-2.5 w-2.5 text-indigo-500" />
+                          <span className="text-[10px] text-indigo-500 font-bold uppercase tracking-wider">Auto</span>
+                        </div>
                       )}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-bold text-lg">
-                      {formatCurrency(expense.amount)}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onDeleteExpense(expense.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    
+                    <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400">
+                      <span className={`${categoryInfo.text}`}>{expense.category}</span>
+                      <span>•</span>
+                      <span>{formatDate(expense.date)}</span>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <PaymentIcon className="h-2.5 w-2.5" />
+                        <span className="uppercase">{expense.paymentMethod}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )
-            })
-          )}
-        </div>
-      </CardContent>
-    </Card>
+                
+                <div className="flex items-center gap-6 ml-4">
+                  <span className="font-bold text-lg text-slate-900 tracking-tight">
+                    {formatCurrency(expense.amount)}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDeleteExpense(expense.id)}
+                    className="h-9 w-9 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )
+          })
+        )}
+      </div>
+    </div>
   )
 }
-
