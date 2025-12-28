@@ -148,6 +148,7 @@ function App() {
 
 							<TabsContent value="budgets" className="mt-0 outline-none">
 								<BudgetManager
+									expenses={expenses}
 									budgets={budgets}
 									onSetBudget={handleSetBudget}
 								/>

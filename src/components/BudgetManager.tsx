@@ -9,11 +9,12 @@ import { CATEGORIES } from '@/types'
 import { TrendingUp, AlertTriangle, Target, DollarSign, CheckCircle2 } from 'lucide-react'
 
 interface BudgetManagerProps {
+  expenses: Expense[]
   budgets: Budget[]
   onSetBudget: (budget: Budget) => void
 }
 
-export function BudgetManager({ budgets, onSetBudget }: BudgetManagerProps) {
+export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerProps) {
   const [category, setCategory] = useState('')
   const [limit, setLimit] = useState('')
 
@@ -46,8 +47,14 @@ export function BudgetManager({ budgets, onSetBudget }: BudgetManagerProps) {
 
   const currentMonthBudgets = budgets.filter((b) => b.month === currentMonth)
 
-  const getPercentage = (budget: Budget) => {
-    return (budget.currentSpend / budget.monthlyLimit) * 100
+  const getCategorySpend = (category: string) => {
+    return expenses
+      .filter((e) => e.category === category && e.date.startsWith(currentMonth))
+      .reduce((sum, e) => sum + e.amount, 0)
+  }
+
+  const getPercentage = (spent: number, limit: number) => {
+    return (spent / limit) * 100
   }
 
   const getStatusColor = (percentage: number) => {
@@ -119,7 +126,8 @@ export function BudgetManager({ budgets, onSetBudget }: BudgetManagerProps) {
             </div>
           ) : (
             currentMonthBudgets.map((budget) => {
-              const percentage = getPercentage(budget)
+              const currentSpend = getCategorySpend(budget.category)
+              const percentage = getPercentage(currentSpend, budget.monthlyLimit)
               const statusColor = getStatusColor(percentage)
               const gradient = getGradient(percentage)
 
@@ -157,13 +165,13 @@ export function BudgetManager({ budgets, onSetBudget }: BudgetManagerProps) {
                       <div className="space-y-1">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Remaining</p>
                         <p className={`text-lg font-bold ${statusColor} tracking-tight`}>
-                          {formatCurrency(Math.max(0, budget.monthlyLimit - budget.currentSpend))}
+                          {formatCurrency(Math.max(0, budget.monthlyLimit - currentSpend))}
                         </p>
                       </div>
                       <div className="text-right space-y-1">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Limit</p>
                         <p className="text-sm font-bold text-slate-600 tracking-tight">
-                          {formatCurrency(budget.currentSpend)} <span className="text-slate-300 font-medium mx-1">/</span> {formatCurrency(budget.monthlyLimit)}
+                          {formatCurrency(currentSpend)} <span className="text-slate-300 font-medium mx-1">/</span> {formatCurrency(budget.monthlyLimit)}
                         </p>
                       </div>
                     </div>
