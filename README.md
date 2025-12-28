@@ -26,6 +26,7 @@ A modern, Electron-based expense tracking application built with React, TypeScri
 - **Electron**: Desktop application framework
 - **React**: UI framework
 - **TypeScript**: Type-safe development
+- **SQLite + Drizzle ORM**: Fast, type-safe database
 - **Vite**: Fast build tool
 - **shadcn/ui**: Beautiful UI components
 - **Tailwind CSS**: Utility-first CSS framework
@@ -71,6 +72,8 @@ The built application will be available in the `release` folder.
 Spendora/
 ├── electron/           # Electron main process files
 │   ├── main.ts        # Main process entry point
+│   ├── database.ts    # Database operations with Drizzle ORM
+│   ├── schema.ts      # Drizzle schema definitions
 │   └── preload.ts     # Preload script for secure IPC
 ├── src/
 │   ├── components/    # React components
@@ -93,7 +96,15 @@ Spendora/
 
 ## Data Storage
 
-All expense and budget data is stored locally in JSON format in the user's application data directory. The app uses Electron's IPC (Inter-Process Communication) to securely communicate between the renderer process (React UI) and the main process (data storage).
+All expense and budget data is stored locally in a **SQLite database** in the user's application data directory. The app uses:
+- **SQLite** for fast, reliable data storage with ACID transactions
+- **Electron's IPC** for secure communication between UI and database
+- **Automatic migration** from old JSON format (if exists)
+
+### Database Location
+- **macOS**: `~/Library/Application Support/spendora/spendora.db`
+- **Windows**: `%APPDATA%/spendora/spendora.db`
+- **Linux**: `~/.config/spendora/spendora.db`
 
 ## Features in Detail
 

@@ -65,12 +65,14 @@ This will:
 
 ### Data Storage
 
-All your expense and budget data is stored locally on your computer at:
-- **macOS**: `~/Library/Application Support/spendora/spendora-data.json`
-- **Windows**: `%APPDATA%/spendora/spendora-data.json`
-- **Linux**: `~/.config/spendora/spendora-data.json`
+All your expense and budget data is stored locally in a SQLite database at:
+- **macOS**: `~/Library/Application Support/spendora/spendora.db`
+- **Windows**: `%APPDATA%/spendora/spendora.db`
+- **Linux**: `~/.config/spendora/spendora.db`
 
 Your data is completely private and never leaves your device!
+
+**Note**: If you had data in the old JSON format, it will be automatically migrated to SQLite on first launch.
 
 ### Building for Production
 

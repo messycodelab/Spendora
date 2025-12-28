@@ -6,6 +6,9 @@ export interface Expense {
   date: string;
   paymentMethod: 'upi' | 'cash' | 'card';
   type: 'one-time' | 'recurring';
+  recurringFrequency?: 'daily' | 'weekly' | 'monthly' | 'yearly' | null;
+  recurringNextDate?: string | null;
+  // Keep backward compatibility with old structure
   recurringDetails?: {
     frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
     nextDate: string;

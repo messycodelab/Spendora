@@ -1,61 +1,49 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import * as fs from "fs";
+import {
+	initDatabase,
+	closeDatabase,
+	getAllExpenses,
+	addExpense,
+	deleteExpense,
+	getRecurringExpenses,
+	getAllBudgets,
+	setBudget,
+	migrateFromJSON,
+	type Expense,
+	type Budget,
+} from "./database";
 
 let mainWindow: BrowserWindow | null = null;
 const isDev = process.env.NODE_ENV === "development" || !app.isPackaged;
 
-// Get user data path for storing expenses data
+// Get user data path for storing database
 const userDataPath = app.getPath("userData");
-const dataPath = path.join(userDataPath, "spendora-data.json");
+const dbPath = path.join(userDataPath, "spendora.db");
+const oldJsonPath = path.join(userDataPath, "spendora-data.json");
 
-// Initialize data store
-interface Expense {
-	id: string;
-	amount: number;
-	category: string;
-	description: string;
-	date: string;
-	paymentMethod: "upi" | "cash" | "card";
-	type: "one-time" | "recurring";
-	recurringDetails?: {
-		frequency: "daily" | "weekly" | "monthly" | "yearly";
-		nextDate: string;
-	};
-}
+// Initialize database
+function setupDatabase() {
+	initDatabase(dbPath);
 
-interface Budget {
-	id: string;
-	category: string;
-	monthlyLimit: number;
-	currentSpend: number;
-	month: string;
-}
+	// Check if old JSON file exists and migrate
+	if (fs.existsSync(oldJsonPath)) {
+		try {
+			const jsonData = JSON.parse(fs.readFileSync(oldJsonPath, "utf-8"));
+			console.log("Found existing JSON data, migrating to SQLite...");
+			migrateFromJSON(jsonData);
 
-interface DataStore {
-	expenses: Expense[];
-	budgets: Budget[];
-}
-
-// Load data from file
-function loadData(): DataStore {
-	try {
-		if (fs.existsSync(dataPath)) {
-			const data = fs.readFileSync(dataPath, "utf-8");
-			return JSON.parse(data);
+			// Backup old JSON file
+			const backupPath = path.join(
+				userDataPath,
+				`spendora-data.json.backup.${Date.now()}`,
+			);
+			fs.renameSync(oldJsonPath, backupPath);
+			console.log(`Old data backed up to: ${backupPath}`);
+		} catch (error) {
+			console.error("Error migrating from JSON:", error);
 		}
-	} catch (error) {
-		console.error("Error loading data:", error);
-	}
-	return { expenses: [], budgets: [] };
-}
-
-// Save data to file
-function saveData(data: DataStore): void {
-	try {
-		fs.writeFileSync(dataPath, JSON.stringify(data, null, 2), "utf-8");
-	} catch (error) {
-		console.error("Error saving data:", error);
 	}
 }
 
@@ -83,6 +71,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+	setupDatabase();
 	createWindow();
 
 	app.on("activate", () => {
@@ -93,82 +82,67 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
+	closeDatabase();
 	if (process.platform !== "darwin") {
 		app.quit();
 	}
 });
 
+app.on("before-quit", () => {
+	closeDatabase();
+});
+
 // IPC Handlers
 ipcMain.handle("get-expenses", () => {
-	const data = loadData();
-	return data.expenses;
+	try {
+		return getAllExpenses();
+	} catch (error) {
+		console.error("Error getting expenses:", error);
+		return [];
+	}
 });
 
 ipcMain.handle("add-expense", (_event, expense: Expense) => {
-	const data = loadData();
-	data.expenses.push(expense);
-
-	// Update budget if exists
-	const currentMonth = new Date().toISOString().slice(0, 7);
-	const budgetIndex = data.budgets.findIndex(
-		(b) => b.category === expense.category && b.month === currentMonth,
-	);
-
-	if (budgetIndex !== -1) {
-		data.budgets[budgetIndex].currentSpend += expense.amount;
+	try {
+		return addExpense(expense);
+	} catch (error) {
+		console.error("Error adding expense:", error);
+		throw error;
 	}
-
-	saveData(data);
-	return expense;
 });
 
 ipcMain.handle("delete-expense", (_event, id: string) => {
-	const data = loadData();
-	const expenseIndex = data.expenses.findIndex((e) => e.id === id);
-
-	if (expenseIndex !== -1) {
-		const expense = data.expenses[expenseIndex];
-		const currentMonth = new Date().toISOString().slice(0, 7);
-
-		// Update budget if exists
-		const budgetIndex = data.budgets.findIndex(
-			(b) => b.category === expense.category && b.month === currentMonth,
-		);
-
-		if (budgetIndex !== -1) {
-			data.budgets[budgetIndex].currentSpend -= expense.amount;
-		}
-
-		data.expenses.splice(expenseIndex, 1);
-		saveData(data);
-		return true;
+	try {
+		return deleteExpense(id);
+	} catch (error) {
+		console.error("Error deleting expense:", error);
+		return false;
 	}
-
-	return false;
 });
 
 ipcMain.handle("get-budgets", () => {
-	const data = loadData();
-	return data.budgets;
+	try {
+		return getAllBudgets();
+	} catch (error) {
+		console.error("Error getting budgets:", error);
+		return [];
+	}
 });
 
 ipcMain.handle("set-budget", (_event, budget: Budget) => {
-	const data = loadData();
-	const existingIndex = data.budgets.findIndex(
-		(b) => b.category === budget.category && b.month === budget.month,
-	);
-
-	if (existingIndex !== -1) {
-		data.budgets[existingIndex] = budget;
-	} else {
-		data.budgets.push(budget);
+	try {
+		return setBudget(budget);
+	} catch (error) {
+		console.error("Error setting budget:", error);
+		throw error;
 	}
-
-	saveData(data);
-	return budget;
 });
 
 ipcMain.handle("get-recurring-expenses", () => {
-	const data = loadData();
-	return data.expenses.filter((e) => e.type === "recurring");
+	try {
+		return getRecurringExpenses();
+	} catch (error) {
+		console.error("Error getting recurring expenses:", error);
+		return [];
+	}
 });
