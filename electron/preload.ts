@@ -12,4 +12,15 @@ contextBridge.exposeInMainWorld("electron", {
 
 	// Recurring expenses
 	getRecurringExpenses: () => ipcRenderer.invoke("get-recurring-expenses"),
+
+	// Loan operations
+	getLoans: () => ipcRenderer.invoke("get-loans"),
+	addLoan: (loan: any) => ipcRenderer.invoke("add-loan", loan),
+	updateLoan: (id: string, updates: any) =>
+		ipcRenderer.invoke("update-loan", id, updates),
+	deleteLoan: (id: string) => ipcRenderer.invoke("delete-loan", id),
+	getLoanPayments: (loanId: string) =>
+		ipcRenderer.invoke("get-loan-payments", loanId),
+	addLoanPayment: (payment: any) =>
+		ipcRenderer.invoke("add-loan-payment", payment),
 });

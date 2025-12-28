@@ -10,9 +10,17 @@ import {
 	getRecurringExpenses,
 	getAllBudgets,
 	setBudget,
+	getAllLoans,
+	addLoan,
+	updateLoan,
+	deleteLoan,
+	getLoanPayments,
+	addLoanPayment,
 	migrateFromJSON,
 	type Expense,
 	type Budget,
+	type Loan,
+	type LoanPayment,
 } from "./database";
 
 let mainWindow: BrowserWindow | null = null;
@@ -144,5 +152,60 @@ ipcMain.handle("get-recurring-expenses", () => {
 	} catch (error) {
 		console.error("Error getting recurring expenses:", error);
 		return [];
+	}
+});
+
+// Loan Handlers
+ipcMain.handle("get-loans", () => {
+	try {
+		return getAllLoans();
+	} catch (error) {
+		console.error("Error getting loans:", error);
+		return [];
+	}
+});
+
+ipcMain.handle("add-loan", (_event, loan: Loan) => {
+	try {
+		return addLoan(loan);
+	} catch (error) {
+		console.error("Error adding loan:", error);
+		throw error;
+	}
+});
+
+ipcMain.handle("update-loan", (_event, id: string, updates: Partial<Loan>) => {
+	try {
+		return updateLoan(id, updates);
+	} catch (error) {
+		console.error("Error updating loan:", error);
+		throw error;
+	}
+});
+
+ipcMain.handle("delete-loan", (_event, id: string) => {
+	try {
+		return deleteLoan(id);
+	} catch (error) {
+		console.error("Error deleting loan:", error);
+		return false;
+	}
+});
+
+ipcMain.handle("get-loan-payments", (_event, loanId: string) => {
+	try {
+		return getLoanPayments(loanId);
+	} catch (error) {
+		console.error("Error getting loan payments:", error);
+		return [];
+	}
+});
+
+ipcMain.handle("add-loan-payment", (_event, payment: LoanPayment) => {
+	try {
+		return addLoanPayment(payment);
+	} catch (error) {
+		console.error("Error adding loan payment:", error);
+		throw error;
 	}
 });

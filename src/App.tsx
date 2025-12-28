@@ -5,7 +5,8 @@ import { ExpenseList } from "./components/ExpenseList";
 import { BudgetManager } from "./components/BudgetManager";
 import { RecurringExpenses } from "./components/RecurringExpenses";
 import { Dashboard } from "./components/Dashboard";
-import type { Expense, Budget } from "./types";
+import { LoansLiabilities } from "./components/LoansLiabilities/LoansLiabilities";
+import type { Expense, Budget, Loan, LoanPayment } from "./types";
 import { normalizeExpense, toStorageFormat } from "./lib/expense-adapter";
 import { Wallet } from "lucide-react";
 
@@ -18,6 +19,12 @@ declare global {
 			getBudgets: () => Promise<Budget[]>;
 			setBudget: (budget: Budget) => Promise<Budget>;
 			getRecurringExpenses: () => Promise<Expense[]>;
+			getLoans: () => Promise<Loan[]>;
+			addLoan: (loan: Loan) => Promise<Loan>;
+			updateLoan: (id: string, updates: Partial<Loan>) => Promise<Loan>;
+			deleteLoan: (id: string) => Promise<boolean>;
+			getLoanPayments: (loanId: string) => Promise<LoanPayment[]>;
+			addLoanPayment: (payment: LoanPayment) => Promise<LoanPayment>;
 		};
 	}
 }
@@ -135,6 +142,12 @@ function App() {
 								>
 									Recurring
 								</TabsTrigger>
+								<TabsTrigger
+									value="loans"
+									className="rounded-xl px-8 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-indigo-600 transition-all"
+								>
+									Loans
+								</TabsTrigger>
 							</TabsList>
 						</div>
 
@@ -156,6 +169,10 @@ function App() {
 
 							<TabsContent value="recurring" className="mt-0 outline-none">
 								<RecurringExpenses expenses={expenses} />
+							</TabsContent>
+
+							<TabsContent value="loans" className="mt-0 outline-none">
+								<LoansLiabilities />
 							</TabsContent>
 						</div>
 					</Tabs>

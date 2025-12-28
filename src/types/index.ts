@@ -23,6 +23,33 @@ export interface Budget {
   month: string;
 }
 
+export type LoanType = 'home' | 'car' | 'personal' | 'credit_card' | 'other';
+
+export interface Loan {
+  id: string;
+  name: string;
+  type: LoanType;
+  principalAmount: number;
+  interestRate: number;
+  tenureMonths: number;
+  startDate: string;
+  emiAmount: number;
+  remainingPrincipal: number;
+  nextEmiDate: string | null;
+  isPaidOff: number; // 0 or 1
+  createdAt?: string;
+}
+
+export interface LoanPayment {
+  id: string;
+  loanId: string;
+  amount: number;
+  principalComponent: number;
+  interestComponent: number;
+  date: string;
+  createdAt?: string;
+}
+
 export const CATEGORIES = [
   'Food & Dining',
   'Transportation',
@@ -38,4 +65,5 @@ export const CATEGORIES = [
 
 export const PAYMENT_METHODS = ['upi', 'cash', 'card'] as const;
 export const RECURRING_FREQUENCIES = ['daily', 'weekly', 'monthly', 'yearly'] as const;
+export const LOAN_TYPES = ['home', 'car', 'personal', 'credit_card', 'other'] as const;
 

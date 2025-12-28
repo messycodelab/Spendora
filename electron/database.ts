@@ -4,12 +4,21 @@ import { eq, and, sql } from "drizzle-orm";
 import * as path from "path";
 import * as fs from "fs";
 import * as schema from "./schema";
-import { expenses, budgets, type Expense, type Budget } from "./schema";
+import {
+	expenses,
+	budgets,
+	loans,
+	loanPayments,
+	type Expense,
+	type Budget,
+	type Loan,
+	type LoanPayment,
+} from "./schema";
 
 let db: ReturnType<typeof drizzle> | null = null;
 let sqlite: Database.Database | null = null;
 
-export type { Expense, Budget };
+export type { Expense, Budget, Loan, LoanPayment };
 
 export function initDatabase(dbPath: string): ReturnType<typeof drizzle> {
 	// Ensure directory exists
@@ -63,6 +72,38 @@ function createTables(database: Database.Database): void {
     );
   `);
 
+	// Create loans table
+	database.exec(`
+    CREATE TABLE IF NOT EXISTS loans (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('home', 'car', 'personal', 'credit_card', 'other')),
+      principal_amount REAL NOT NULL,
+      interest_rate REAL NOT NULL,
+      tenure_months REAL NOT NULL,
+      start_date TEXT NOT NULL,
+      emi_amount REAL NOT NULL,
+      remaining_principal REAL NOT NULL,
+      next_emi_date TEXT,
+      is_paid_off REAL NOT NULL DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+	// Create loan_payments table
+	database.exec(`
+    CREATE TABLE IF NOT EXISTS loan_payments (
+      id TEXT PRIMARY KEY,
+      loan_id TEXT NOT NULL,
+      amount REAL NOT NULL,
+      principal_component REAL NOT NULL,
+      interest_component REAL NOT NULL,
+      date TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(loan_id) REFERENCES loans(id) ON DELETE CASCADE
+    );
+  `);
+
 	// Create indexes for better query performance
 	database.exec(`
     CREATE INDEX IF NOT EXISTS idx_expenses_date ON expenses(date);
@@ -70,6 +111,9 @@ function createTables(database: Database.Database): void {
     CREATE INDEX IF NOT EXISTS idx_expenses_type ON expenses(type);
     CREATE INDEX IF NOT EXISTS idx_budgets_month ON budgets(month);
     CREATE INDEX IF NOT EXISTS idx_budgets_category ON budgets(category);
+    CREATE INDEX IF NOT EXISTS idx_loans_type ON loans(type);
+    CREATE INDEX IF NOT EXISTS idx_loan_payments_loan_id ON loan_payments(loan_id);
+    CREATE INDEX IF NOT EXISTS idx_loan_payments_date ON loan_payments(date);
   `);
 }
 
@@ -197,6 +241,97 @@ export function getRecurringExpenses(): Expense[] {
 		.where(eq(expenses.type, "recurring"))
 		.orderBy(sql`${expenses.date} DESC`)
 		.all();
+}
+
+// Loan operations
+export function getAllLoans(): Loan[] {
+	const database = getDatabase();
+	return database.select().from(loans).all();
+}
+
+export function addLoan(loan: Omit<Loan, "createdAt">): Loan {
+	const database = getDatabase();
+	database.insert(loans).values(loan).run();
+
+	const inserted = database
+		.select()
+		.from(loans)
+		.where(eq(loans.id, loan.id))
+		.get();
+
+	if (!inserted) {
+		throw new Error("Failed to insert loan");
+	}
+
+	return inserted;
+}
+
+export function updateLoan(
+	id: string,
+	updates: Partial<Omit<Loan, "id" | "createdAt">>,
+): Loan {
+	const database = getDatabase();
+	database.update(loans).set(updates).where(eq(loans.id, id)).run();
+
+	const updated = database.select().from(loans).where(eq(loans.id, id)).get();
+
+	if (!updated) {
+		throw new Error("Failed to update loan");
+	}
+
+	return updated;
+}
+
+export function deleteLoan(id: string): boolean {
+	const database = getDatabase();
+	database.delete(loans).where(eq(loans.id, id)).run();
+	return true;
+}
+
+// Loan Payment operations
+export function getLoanPayments(loanId: string): LoanPayment[] {
+	const database = getDatabase();
+	return database
+		.select()
+		.from(loanPayments)
+		.where(eq(loanPayments.loanId, loanId))
+		.orderBy(sql`${loanPayments.date} DESC`)
+		.all();
+}
+
+export function addLoanPayment(
+	payment: Omit<LoanPayment, "createdAt">,
+): LoanPayment {
+	const database = getDatabase();
+
+	// Use transaction to update loan remaining principal
+	if (sqlite) {
+		const addPayment = sqlite.transaction(() => {
+			database.insert(loanPayments).values(payment).run();
+
+			database
+				.update(loans)
+				.set({
+					remainingPrincipal: sql`${loans.remainingPrincipal} - ${payment.principalComponent}`,
+				})
+				.where(eq(loans.id, payment.loanId))
+				.run();
+		});
+
+		addPayment();
+	}
+
+	const inserted = database
+		.select()
+		.from(loanPayments)
+		.where(eq(loanPayments.id, payment.id))
+		.get();
+
+	if (!inserted) {
+		throw new Error("Failed to insert loan payment");
+	}
+
+	return inserted;
 }
 
 // Budget operations using Drizzle ORM
