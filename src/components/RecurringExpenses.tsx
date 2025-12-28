@@ -58,9 +58,9 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
           </div>
         </div>
 
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 grid md:grid-cols-2 gap-4 auto-rows-min">
           {recurringExpenses.length === 0 ? (
-            <div className="text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
+            <div className="md:col-span-2 text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
               <div className="bg-white h-16 w-16 rounded-3xl flex items-center justify-center shadow-sm mx-auto mb-4">
                 <Clock className="h-8 w-8 text-slate-100" />
               </div>
@@ -76,32 +76,29 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
                   key={expense.id}
                   className="p-5 bg-white rounded-[2rem] border border-slate-50 shadow-sm hover:shadow-md transition-all duration-300 group"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex gap-4">
-                      <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg group-hover:rotate-12 transition-transform duration-500`}>
-                        <Repeat className="h-5 w-5" />
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex gap-3 min-w-0">
+                      <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg shrink-0 group-hover:rotate-12 transition-transform duration-500`}>
+                        <Repeat className="h-4.5 w-4.5" />
                       </div>
-                      <div>
-                        <h4 className="font-bold text-slate-800 text-lg mb-1">{expense.description}</h4>
-                        <div className="flex items-center gap-3">
-                          <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-slate-100 text-slate-500`}>
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-slate-800 text-sm mb-1 truncate">{expense.description}</h4>
+                        <div className="flex flex-col gap-1">
+                          <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 inline-block w-fit`}>
                             {frequency}
                           </span>
-                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                            <Calendar className="h-3 w-3" />
-                            Next: {formatDate(expense.recurringDetails?.nextDate || '')}
+                          <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-wide truncate">
+                            <Calendar className="h-2.5 w-2.5" />
+                            {formatDate(expense.recurringDetails?.nextDate || '')}
                           </div>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="text-right">
-                      <div className="text-2xl font-black text-slate-900 tracking-tighter">
+                    <div className="text-right shrink-0">
+                      <div className="text-lg font-black text-slate-900 tracking-tighter">
                         {formatCurrency(expense.amount)}
                       </div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                        per cycle
-                      </p>
                     </div>
                   </div>
                 </div>

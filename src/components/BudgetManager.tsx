@@ -116,9 +116,9 @@ export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerP
           </Button>
         </form>
 
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 grid md:grid-cols-2 gap-4 auto-rows-min">
           {currentMonthBudgets.length === 0 ? (
-            <div className="text-center py-16 bg-white/50 rounded-[2rem] border-2 border-dashed border-slate-100">
+            <div className="md:col-span-2 text-center py-16 bg-white/50 rounded-[2rem] border-2 border-dashed border-slate-100">
               <div className="bg-white h-16 w-16 rounded-3xl flex items-center justify-center shadow-sm mx-auto mb-4">
                 <Target className="h-8 w-8 text-slate-100" />
               </div>
@@ -134,27 +134,22 @@ export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerP
               return (
                 <div
                   key={budget.id}
-                  className="p-6 bg-white rounded-[2rem] border border-slate-50 shadow-sm hover:shadow-md transition-all duration-300 group"
+                  className="p-5 bg-white rounded-[2rem] border border-slate-50 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
                 >
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className={`h-10 w-10 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg`}>
-                        <CheckCircle2 className="h-5 w-5" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-lg shrink-0`}>
+                        <CheckCircle2 className="h-4.5 w-4.5" />
                       </div>
-                      <h4 className="font-bold text-slate-800 text-lg">{budget.category}</h4>
+                      <h4 className="font-bold text-slate-800 text-sm truncate max-w-[100px]">{budget.category}</h4>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {percentage >= 80 && (
-                        <AlertTriangle className={`h-5 w-5 ${statusColor} animate-pulse`} />
-                      )}
-                      <span className={`font-black text-2xl ${statusColor} tracking-tighter`}>
-                        {percentage.toFixed(0)}%
-                      </span>
-                    </div>
+                    <span className={`font-black text-lg ${statusColor} tracking-tighter`}>
+                      {percentage.toFixed(0)}%
+                    </span>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="relative h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div className="space-y-3">
+                    <div className="relative h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`absolute left-0 top-0 h-full bg-gradient-to-r ${gradient} transition-all duration-1000 ease-out rounded-full`}
                         style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -162,16 +157,16 @@ export function BudgetManager({ expenses, budgets, onSetBudget }: BudgetManagerP
                     </div>
                     
                     <div className="flex justify-between items-end">
-                      <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Remaining</p>
-                        <p className={`text-lg font-bold ${statusColor} tracking-tight`}>
+                      <div className="space-y-0.5">
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Left</p>
+                        <p className={`text-sm font-bold ${statusColor} tracking-tight`}>
                           {formatCurrency(Math.max(0, budget.monthlyLimit - currentSpend))}
                         </p>
                       </div>
-                      <div className="text-right space-y-1">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Limit</p>
-                        <p className="text-sm font-bold text-slate-600 tracking-tight">
-                          {formatCurrency(currentSpend)} <span className="text-slate-300 font-medium mx-1">/</span> {formatCurrency(budget.monthlyLimit)}
+                      <div className="text-right space-y-0.5">
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Limit</p>
+                        <p className="text-[11px] font-bold text-slate-600 tracking-tight">
+                          {formatCurrency(budget.monthlyLimit)}
                         </p>
                       </div>
                     </div>
