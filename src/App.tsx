@@ -27,11 +27,11 @@ import {
 	LayoutDashboard,
 	Receipt,
 	PieChart,
-	Repeat,
 	Building2,
 	Wallet,
 	Target,
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 
 declare global {
 	interface Window {
@@ -181,7 +181,6 @@ function App() {
 		{ id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
 		{ id: "expenses", label: "Expenses", icon: Receipt },
 		{ id: "budgets", label: "Budgets", icon: PieChart },
-		{ id: "recurring", label: "Recurring", icon: Repeat },
 		{ id: "loans", label: "Loans", icon: Building2 },
 		{ id: "investments", label: "Investments", icon: Wallet },
 		{ id: "goals", label: "Goals", icon: Target },
@@ -292,29 +291,65 @@ function App() {
 						)}
 						{activeTab === "expenses" && (
 							<div className="space-y-6">
-								<div className="flex items-center justify-between">
-									<h2 className="text-xl font-bold text-slate-900">Expenses</h2>
-									<button
-										type="button"
-										onClick={() =>
-											(
-												document.querySelector(
-													"[data-add-expense-trigger]",
-												) as HTMLElement
-											)?.click()
-										}
-										className="h-9 px-4 bg-[#062163] text-white rounded-xl shadow-lg flex items-center gap-2 hover:scale-105 active:scale-95 transition-all font-bold text-xs"
-									>
-										<Plus className="h-4 w-4" />
-										Add Expense
-									</button>
-								</div>
-								<div className="bg-white rounded-3xl p-2 shadow-sm border border-slate-100">
-									<ExpenseList
-										expenses={expenses}
-										onDeleteExpense={handleDeleteExpense}
-									/>
-								</div>
+								<Tabs defaultValue="daily" className="w-full space-y-6">
+									<div className="flex items-center justify-between px-1">
+										<div className="flex items-center gap-2">
+											<div className="h-8 w-8 rounded-lg bg-[#062163] flex items-center justify-center text-white">
+												<Receipt className="h-5 w-5" />
+											</div>
+											<h2 className="text-xl font-bold text-slate-900">
+												Expenses
+											</h2>
+										</div>
+
+										<div className="flex items-center gap-4">
+											<TabsList className="bg-slate-100/80 p-1 rounded-xl h-10 border-none">
+												<TabsTrigger
+													value="daily"
+													className="rounded-lg px-4 h-8 text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#062163] data-[state=active]:shadow-sm transition-all"
+												>
+													Daily
+												</TabsTrigger>
+												<TabsTrigger
+													value="recurring"
+													className="rounded-lg px-4 h-8 text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#062163] data-[state=active]:shadow-sm transition-all"
+												>
+													Recurring
+												</TabsTrigger>
+											</TabsList>
+
+											<button
+												type="button"
+												onClick={() =>
+													(
+														document.querySelector(
+															"[data-add-expense-trigger]",
+														) as HTMLElement
+													)?.click()
+												}
+												className="h-9 px-4 bg-[#062163] text-white rounded-xl shadow-lg flex items-center gap-2 hover:scale-105 active:scale-95 transition-all font-bold text-xs"
+											>
+												<Plus className="h-4 w-4" />
+												Add Expense
+											</button>
+										</div>
+									</div>
+
+									<TabsContent value="daily" className="mt-0 outline-none">
+										<div className="bg-white rounded-3xl p-2 shadow-sm border border-slate-100">
+											<ExpenseList
+												expenses={expenses}
+												onDeleteExpense={handleDeleteExpense}
+											/>
+										</div>
+									</TabsContent>
+
+									<TabsContent value="recurring" className="mt-0 outline-none">
+										<div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+											<RecurringExpenses expenses={expenses} />
+										</div>
+									</TabsContent>
+								</Tabs>
 							</div>
 						)}
 						{activeTab === "budgets" && (
@@ -326,14 +361,6 @@ function App() {
 										budgets={budgets}
 										onSetBudget={handleSetBudget}
 									/>
-								</div>
-							</div>
-						)}
-						{activeTab === "recurring" && (
-							<div className="space-y-6">
-								<h2 className="text-xl font-bold text-slate-900">Recurring</h2>
-								<div className="bg-white rounded-3xl p-2 shadow-sm border border-slate-100">
-									<RecurringExpenses expenses={expenses} />
 								</div>
 							</div>
 						)}

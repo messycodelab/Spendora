@@ -553,61 +553,91 @@ export function Dashboard({
 						<h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider opacity-60">
 							Net Worth Trend
 						</h3>
-						<div className="h-[250px]">
-							<ResponsiveContainer width="100%" height="100%">
-								<AreaChart
-									data={netWorthHistory
-										.slice(0, 12)
-										.reverse()
-										.map((h) => ({
-											date: new Date(h.date).toLocaleDateString("en-US", {
-												month: "short",
-											}),
-											netWorth: h.netWorth,
-										}))}
-								>
-									<defs>
-										<linearGradient id="nwGrad" x1="0" y1="0" x2="0" y2="1">
-											<stop offset="5%" stopColor="#062163" stopOpacity={0.1} />
-											<stop offset="95%" stopColor="#062163" stopOpacity={0} />
-										</linearGradient>
-									</defs>
-									<CartesianGrid
-										strokeDasharray="3 3"
-										vertical={false}
-										stroke="#f1f5f9"
-									/>
-									<XAxis
-										dataKey="date"
-										axisLine={false}
-										tickLine={false}
-										tick={{ fontSize: 10, fill: "#94a3b8", fontWeight: "bold" }}
-									/>
-									<YAxis
-										axisLine={false}
-										tickLine={false}
-										tick={{ fontSize: 10, fill: "#94a3b8", fontWeight: "bold" }}
-										tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`}
-									/>
-									<Tooltip
-										contentStyle={{
-											borderRadius: "16px",
-											border: "none",
-											boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-											fontSize: "12px",
-											fontWeight: "bold",
-										}}
-									/>
-									<Area
-										type="monotone"
-										dataKey="netWorth"
-										stroke="#062163"
-										strokeWidth={3}
-										fillOpacity={1}
-										fill="url(#nwGrad)"
-									/>
-								</AreaChart>
-							</ResponsiveContainer>
+						<div className="h-[250px] flex items-center justify-center">
+							{netWorthHistory.length > 0 ? (
+								<ResponsiveContainer width="100%" height="100%">
+									<AreaChart
+										data={netWorthHistory
+											.slice(0, 12)
+											.reverse()
+											.map((h) => ({
+												date: new Date(h.date).toLocaleDateString("en-US", {
+													month: "short",
+												}),
+												netWorth: h.netWorth,
+											}))}
+									>
+										<defs>
+											<linearGradient id="nwGrad" x1="0" y1="0" x2="0" y2="1">
+												<stop
+													offset="5%"
+													stopColor="#062163"
+													stopOpacity={0.1}
+												/>
+												<stop
+													offset="95%"
+													stopColor="#062163"
+													stopOpacity={0}
+												/>
+											</linearGradient>
+										</defs>
+										<CartesianGrid
+											strokeDasharray="3 3"
+											vertical={false}
+											stroke="#f1f5f9"
+										/>
+										<XAxis
+											dataKey="date"
+											axisLine={false}
+											tickLine={false}
+											tick={{
+												fontSize: 10,
+												fill: "#94a3b8",
+												fontWeight: "bold",
+											}}
+										/>
+										<YAxis
+											axisLine={false}
+											tickLine={false}
+											tick={{
+												fontSize: 10,
+												fill: "#94a3b8",
+												fontWeight: "bold",
+											}}
+											tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`}
+										/>
+										<Tooltip
+											contentStyle={{
+												borderRadius: "16px",
+												border: "none",
+												boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+												fontSize: "12px",
+												fontWeight: "bold",
+											}}
+										/>
+										<Area
+											type="monotone"
+											dataKey="netWorth"
+											stroke="#062163"
+											strokeWidth={3}
+											fillOpacity={1}
+											fill="url(#nwGrad)"
+										/>
+									</AreaChart>
+								</ResponsiveContainer>
+							) : (
+								<div className="text-center">
+									<div className="bg-slate-50 h-16 w-16 rounded-3xl flex items-center justify-center mb-4 mx-auto">
+										<Camera className="h-8 w-8 text-slate-200" />
+									</div>
+									<p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
+										No history recorded yet
+									</p>
+									<p className="text-slate-300 text-[10px] mt-1 uppercase font-medium">
+										Click "Snapshot" above to start tracking
+									</p>
+								</div>
+							)}
 						</div>
 					</div>
 

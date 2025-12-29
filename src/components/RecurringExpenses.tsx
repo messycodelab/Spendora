@@ -108,47 +108,35 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 	};
 
 	return (
-		<div className="space-y-8">
-			<div className="flex items-center justify-between px-2">
-				<div>
-					<h2 className="text-lg font-bold text-slate-900 tracking-tight">
-						Automatic Subscriptions
-					</h2>
-					<p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">
-						Tracking your repetitive commitments
-					</p>
-				</div>
-				<Repeat className="h-5 w-5 text-slate-300" />
-			</div>
-
-			<div className="grid lg:grid-cols-3 gap-8">
+		<div className="space-y-6">
+			<div className="grid lg:grid-cols-3 gap-6">
 				<div className="lg:col-span-1">
-					<div className="gradient-brand p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
+					<div className="gradient-brand p-6 rounded-[2rem] text-white shadow-lg relative overflow-hidden group">
 						<div className="relative z-10">
-							<div className="bg-white/20 h-12 w-12 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md">
-								<TrendingUp className="h-6 w-6" />
+							<div className="bg-white/20 h-10 w-10 rounded-xl flex items-center justify-center mb-4 backdrop-blur-md">
+								<TrendingUp className="h-5 w-5" />
 							</div>
 							<p className="text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-1">
 								Monthly Committed
 							</p>
-							<h3 className="text-3xl font-black tracking-tighter mb-2">
+							<h3 className="text-2xl font-black tracking-tighter mb-2">
 								{formatCurrency(totalMonthlyRecurring)}
 							</h3>
-							<p className="text-indigo-200/60 text-[10px] font-bold leading-relaxed uppercase tracking-wider">
+							<p className="text-indigo-200/60 text-[9px] font-bold leading-relaxed uppercase tracking-wider">
 								Aggregated across all cycles
 							</p>
 						</div>
-						<Repeat className="absolute -right-8 -bottom-8 h-40 w-40 text-white/5 group-hover:rotate-45 transition-transform duration-1000" />
+						<Repeat className="absolute -right-6 -bottom-6 h-32 w-32 text-white/5 group-hover:rotate-45 transition-transform duration-1000" />
 					</div>
 				</div>
 
 				<div className="lg:col-span-2">
 					{recurringExpenses.length === 0 ? (
-						<div className="modern-card py-20 rounded-[2rem] border-dashed text-center">
-							<div className="h-16 w-16 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-4 text-slate-200">
-								<Clock className="h-8 w-8" />
+						<div className="modern-card py-16 rounded-[2rem] border-dashed text-center h-full flex flex-col justify-center">
+							<div className="h-12 w-12 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-200">
+								<Clock className="h-6 w-6" />
 							</div>
-							<p className="text-slate-400 text-sm font-bold uppercase tracking-widest">
+							<p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
 								No recurring items configured
 							</p>
 						</div>

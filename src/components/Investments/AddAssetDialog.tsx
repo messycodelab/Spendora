@@ -36,7 +36,7 @@ export function AddAssetDialog({ onAddAsset, goals }: AddAssetDialogProps) {
 		new Date().toISOString().slice(0, 10),
 	);
 	const [notes, setNotes] = useState("");
-	const [linkedGoalId, setLinkedGoalId] = useState<string>("");
+	const [linkedGoalId, setLinkedGoalId] = useState<string>("none");
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -51,7 +51,7 @@ export function AddAssetDialog({ onAddAsset, goals }: AddAssetDialogProps) {
 			purchaseDate,
 			lastUpdated: new Date().toISOString().slice(0, 10),
 			notes: notes || null,
-			linkedGoalId: linkedGoalId || null,
+			linkedGoalId: linkedGoalId === "none" ? null : (linkedGoalId || null),
 		};
 
 		onAddAsset(asset);
@@ -67,7 +67,7 @@ export function AddAssetDialog({ onAddAsset, goals }: AddAssetDialogProps) {
 		setUnits("");
 		setPurchaseDate(new Date().toISOString().slice(0, 10));
 		setNotes("");
-		setLinkedGoalId("");
+		setLinkedGoalId("none");
 	};
 
 	// Group asset types by category
@@ -214,7 +214,7 @@ export function AddAssetDialog({ onAddAsset, goals }: AddAssetDialogProps) {
 										<SelectValue placeholder="Select a goal..." />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="">No goal linked</SelectItem>
+										<SelectItem value="none">No goal linked</SelectItem>
 										{activeGoals.map((goal) => (
 											<SelectItem key={goal.id} value={goal.id}>
 												{goal.name}
