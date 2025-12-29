@@ -92,42 +92,42 @@ export function LoansLiabilities() {
       <div className="grid gap-6 md:grid-cols-3">
         <div className="modern-card p-6 rounded-[2rem] group relative overflow-hidden">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 rounded-2xl gradient-purple flex items-center justify-center text-white shadow-lg shadow-indigo-100 transition-transform group-hover:scale-110">
+            <div className="h-10 w-10 rounded-2xl gradient-brand flex items-center justify-center text-white shadow-lg shadow-indigo-100 transition-transform group-hover:scale-110">
               <TrendingDown className="h-5 w-5" />
             </div>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Monthly EMI</span>
           </div>
           <div>
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">{formatCurrency(totalMonthlyObligation)}</h3>
-            <p className="text-xs font-medium text-slate-400">Total recurring obligation</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total recurring obligation</p>
           </div>
         </div>
 
         <div className="modern-card p-6 rounded-[2rem] group relative overflow-hidden">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 rounded-2xl gradient-orange flex items-center justify-center text-white shadow-lg shadow-orange-100 transition-transform group-hover:scale-110">
+            <div className="h-10 w-10 rounded-2xl gradient-danger flex items-center justify-center text-white shadow-lg shadow-rose-100 transition-transform group-hover:scale-110">
               <Landmark className="h-5 w-5" />
             </div>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Outstanding</span>
           </div>
           <div>
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">{formatCurrency(totalOutstandingPrincipal)}</h3>
-            <p className="text-xs font-medium text-slate-400">Total remaining principal</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total remaining principal</p>
           </div>
         </div>
 
         <div className="modern-card p-6 rounded-[2rem] group relative overflow-hidden">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-10 w-10 rounded-2xl gradient-green flex items-center justify-center text-white shadow-lg shadow-emerald-100 transition-transform group-hover:scale-110">
+            <div className="h-10 w-10 rounded-2xl gradient-success flex items-center justify-center text-white shadow-lg shadow-emerald-100 transition-transform group-hover:scale-110">
               <PieChartIcon className="h-5 w-5" />
             </div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Debt Equity</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Debt Ratio</span>
           </div>
           <div>
             <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-1">
               {totalPrincipal > 0 ? ((totalOutstandingPrincipal / totalPrincipal) * 100).toFixed(0) : 0}%
             </h3>
-            <p className="text-xs font-medium text-slate-400">Principal remaining ratio</p>
+            <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Principal remaining ratio</p>
           </div>
         </div>
       </div>
@@ -164,10 +164,10 @@ export function LoansLiabilities() {
 
       {/* EMI Calendar Hint */}
       {loans.length > 0 && (
-        <div className="modern-card p-4 rounded-2xl bg-indigo-50/50 border-none flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-indigo-500 mt-0.5" />
-          <div className="text-xs text-indigo-700 font-medium leading-relaxed">
-            <span className="font-bold uppercase tracking-wider block mb-1">Pro Tip:</span>
+        <div className="modern-card p-4 rounded-2xl bg-slate-50 border-none flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-[#062163] mt-0.5" />
+          <div className="text-xs text-slate-600 font-medium leading-relaxed">
+            <span className="font-bold uppercase tracking-wider block mb-1 text-[#062163]">Pro Tip:</span>
             Log your EMI payments monthly to track principal vs interest split and see your debt reduction over time. The next EMI date is automatically updated upon logging.
           </div>
         </div>

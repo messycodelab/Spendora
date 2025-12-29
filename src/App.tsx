@@ -252,7 +252,7 @@ function App() {
 							<input
 								type="text"
 								placeholder="Search anything..."
-								className="w-full h-10 bg-slate-50 border-none rounded-xl pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-slate-100 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+								className="w-full h-10 bg-slate-50 border-none rounded-xl pl-10 pr-12 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-slate-100 focus:ring-2 focus:ring-[#062163]/10 transition-all"
 							/>
 							<div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
 								<div className="flex items-center gap-1 px-1.5 py-1 bg-white border border-slate-200 rounded text-[10px] font-bold text-slate-400 shadow-sm">
@@ -270,7 +270,7 @@ function App() {
 							</div>
 							<div className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></div>
 						</div>
-						<div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all">
+						<div className="h-10 w-10 rounded-xl gradient-brand flex items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all">
 							S
 						</div>
 					</div>

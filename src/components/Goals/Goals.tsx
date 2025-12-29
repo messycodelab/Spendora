@@ -104,8 +104,8 @@ export function Goals() {
 		return (
 			<div className="flex items-center justify-center h-64">
 				<div className="text-center">
-					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500 mx-auto mb-4"></div>
-					<p className="text-slate-400 text-sm">Loading goals...</p>
+					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#062163] mx-auto mb-4"></div>
+					<p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Loading goals...</p>
 				</div>
 			</div>
 		);
@@ -114,12 +114,12 @@ export function Goals() {
 	return (
 		<div className="space-y-6">
 			{/* Header */}
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between px-1">
 				<div>
-					<h2 className="text-xl font-bold text-slate-900">
+					<h2 className="text-xl font-bold text-slate-900 tracking-tight">
 						Financial Goals
 					</h2>
-					<p className="text-xs text-slate-400 mt-0.5">
+					<p className="text-xs text-slate-400 mt-0.5 font-medium uppercase tracking-wider">
 						Plan and track your financial milestones
 					</p>
 				</div>
@@ -128,71 +128,77 @@ export function Goals() {
 
 			{/* Summary Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-				<div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 text-white">
+				<div className="gradient-brand rounded-2xl p-5 text-white shadow-lg shadow-indigo-100/50">
 					<div className="flex items-center gap-2 mb-3">
 						<Target className="h-5 w-5 opacity-80" />
-						<span className="text-xs font-bold opacity-80 uppercase tracking-wider">
+						<span className="text-[10px] font-bold opacity-80 uppercase tracking-widest">
 							Overall Progress
 						</span>
 					</div>
 					<p className="text-2xl font-black">{overallProgress.toFixed(0)}%</p>
 					<div className="h-2 bg-white/20 rounded-full mt-3 overflow-hidden">
 						<div
-							className="h-full bg-white rounded-full transition-all"
+							className="h-full bg-white rounded-full transition-all duration-1000"
 							style={{ width: `${Math.min(overallProgress, 100)}%` }}
 						/>
 					</div>
 				</div>
 
-				<div className="bg-white border border-slate-100 rounded-2xl p-5">
+				<div className="modern-card p-5 rounded-2xl">
 					<div className="flex items-center gap-2 mb-3">
-						<TrendingUp className="h-5 w-5 text-emerald-500" />
-						<span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+						<div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500">
+							<TrendingUp className="h-4 w-4" />
+						</div>
+						<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
 							Active Goals
 						</span>
 					</div>
 					<p className="text-2xl font-black text-slate-900">
 						{activeGoals.length}
 					</p>
-					<p className="text-xs text-slate-400 mt-1">
-						{formatCurrency(totalCurrentAmount)} saved
+					<p className="text-[10px] text-slate-400 mt-1 font-bold">
+						{formatCurrency(totalCurrentAmount)} SAVED
 					</p>
 				</div>
 
-				<div className="bg-white border border-slate-100 rounded-2xl p-5">
+				<div className="modern-card p-5 rounded-2xl">
 					<div className="flex items-center gap-2 mb-3">
-						<CheckCircle className="h-5 w-5 text-blue-500" />
-						<span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+						<div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+							<CheckCircle className="h-4 w-4" />
+						</div>
+						<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
 							Completed
 						</span>
 					</div>
 					<p className="text-2xl font-black text-slate-900">
 						{completedGoals.length}
 					</p>
-					<p className="text-xs text-slate-400 mt-1">Goals achieved</p>
+					<p className="text-[10px] text-slate-400 mt-1 font-bold uppercase">Goals achieved</p>
 				</div>
 
-				<div className="bg-white border border-slate-100 rounded-2xl p-5">
+				<div className="modern-card p-5 rounded-2xl">
 					<div className="flex items-center gap-2 mb-3">
-						<Clock className="h-5 w-5 text-amber-500" />
-						<span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-							Target Amount
+						<div className="h-8 w-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500">
+							<Clock className="h-4 w-4" />
+						</div>
+						<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+							Target
 						</span>
 					</div>
 					<p className="text-2xl font-black text-slate-900">
 						{formatCurrency(totalTargetAmount)}
 					</p>
-					<p className="text-xs text-slate-400 mt-1">
-						{formatCurrency(totalTargetAmount - totalCurrentAmount)} to go
+					<p className="text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-tight">
+						{formatCurrency(totalTargetAmount - totalCurrentAmount)} TO GO
 					</p>
 				</div>
 			</div>
 
 			{/* Filter Tabs */}
-			<div className="flex items-center gap-2">
-				<Filter className="h-4 w-4 text-slate-400" />
+			<div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+				<Filter className="h-4 w-4 text-slate-400 shrink-0" />
 				{[
-					{ value: "all", label: `All (${goals.length})` },
+					{ value: "all", label: `All Goals (${goals.length})` },
 					{ value: "active", label: `Active (${activeGoals.length})` },
 					{ value: "completed", label: `Completed (${completedGoals.length})` },
 					{ value: "paused", label: `Paused (${pausedGoals.length})` },
@@ -201,10 +207,10 @@ export function Goals() {
 						key={filter.value}
 						type="button"
 						onClick={() => setStatusFilter(filter.value)}
-						className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+						className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${
 							statusFilter === filter.value
-								? "bg-violet-500 text-white"
-								: "bg-slate-100 text-slate-600 hover:bg-slate-200"
+								? "bg-[#062163] text-white border-[#062163] shadow-md"
+								: "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
 						}`}
 					>
 						{filter.label}
@@ -226,16 +232,16 @@ export function Goals() {
 					))}
 				</div>
 			) : (
-				<div className="text-center py-16">
-					<div className="h-20 w-20 bg-violet-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-						<Target className="h-10 w-10 text-violet-300" />
+				<div className="modern-card py-24 rounded-[3rem] border-dashed text-center max-w-2xl mx-auto">
+					<div className="h-24 w-24 bg-indigo-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8">
+						<Target className="h-12 w-12 text-[#062163]/40" />
 					</div>
-					<h3 className="text-lg font-bold text-slate-900 mb-2">
+					<h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
 						{statusFilter === "all"
 							? "Set Your First Financial Goal"
 							: `No ${statusFilter} goals`}
 					</h3>
-					<p className="text-slate-400 text-sm mb-6 max-w-md mx-auto">
+					<p className="text-slate-400 text-sm mb-10 max-w-md mx-auto font-medium leading-relaxed">
 						{statusFilter === "all"
 							? "Create goals for your dream house, car, retirement, or any financial milestone you want to achieve."
 							: `You don't have any ${statusFilter} goals at the moment.`}
@@ -248,34 +254,35 @@ export function Goals() {
 
 			{/* Tips Section */}
 			{goals.length > 0 && activeGoals.length > 0 && (
-				<div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-5">
-					<h3 className="text-sm font-bold text-violet-900 mb-3">
-						💡 Goal Achievement Tips
+				<div className="modern-card p-6 rounded-[2rem] bg-slate-50 border-none">
+					<h3 className="text-sm font-bold text-[#062163] mb-4 uppercase tracking-widest flex items-center gap-2">
+						<span className="h-6 w-6 rounded-lg bg-[#062163]/10 flex items-center justify-center">💡</span>
+						Goal Achievement Tips
 					</h3>
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-						<div className="bg-white/60 rounded-xl p-3">
-							<p className="font-bold text-violet-700 mb-1">
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<div className="bg-white rounded-2xl p-4 border border-slate-100/50 shadow-sm">
+							<p className="text-[10px] font-black text-[#062163] uppercase tracking-widest mb-2">
 								Link Investments
 							</p>
-							<p className="text-violet-600/80">
+							<p className="text-xs text-slate-500 font-medium leading-relaxed">
 								Connect your assets to goals to track dedicated savings for each
 								milestone.
 							</p>
 						</div>
-						<div className="bg-white/60 rounded-xl p-3">
-							<p className="font-bold text-violet-700 mb-1">
+						<div className="bg-white rounded-2xl p-4 border border-slate-100/50 shadow-sm">
+							<p className="text-[10px] font-black text-[#062163] uppercase tracking-widest mb-2">
 								Automate Savings
 							</p>
-							<p className="text-violet-600/80">
+							<p className="text-xs text-slate-500 font-medium leading-relaxed">
 								Set up SIPs or recurring deposits aligned with your monthly
 								savings targets.
 							</p>
 						</div>
-						<div className="bg-white/60 rounded-xl p-3">
-							<p className="font-bold text-violet-700 mb-1">
+						<div className="bg-white rounded-2xl p-4 border border-slate-100/50 shadow-sm">
+							<p className="text-[10px] font-black text-[#062163] uppercase tracking-widest mb-2">
 								Review Regularly
 							</p>
-							<p className="text-violet-600/80">
+							<p className="text-xs text-slate-500 font-medium leading-relaxed">
 								Update your progress monthly to stay on track and adjust targets
 								if needed.
 							</p>

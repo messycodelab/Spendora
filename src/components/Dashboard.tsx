@@ -1,11 +1,11 @@
 import { formatCurrency } from "@/lib/utils";
-import {
-	type Expense,
-	type Budget,
-	type Asset,
-	type Loan,
-	type NetWorthHistory,
-	type Goal,
+import type {
+	Expense,
+	Budget,
+	Asset,
+	Loan,
+	NetWorthHistory,
+	Goal,
 } from "@/types";
 import {
 	Wallet,
@@ -48,16 +48,16 @@ interface DashboardProps {
 }
 
 const COLORS = [
-	"#6366f1",
-	"#3b82f6",
-	"#10b981",
-	"#f59e0b",
-	"#ec4899",
-	"#8b5cf6",
-	"#06b6d4",
-	"#14b8a6",
-	"#f43f5e",
-	"#64748b",
+	"#062163", // Brand Navy
+	"#1e40af", // Brand Blue
+	"#4338ca", // Indigo
+	"#7c3aed", // Violet
+	"#059669", // Emerald
+	"#0891b2", // Cyan
+	"#d97706", // Amber
+	"#dc2626", // Red
+	"#64748b", // Slate
+	"#94a3b8", // Slate Light
 ];
 
 export function Dashboard({
@@ -72,7 +72,7 @@ export function Dashboard({
 	const currentMonth = new Date().toISOString().slice(0, 7);
 	const activeLoans = allLoans.filter((l) => l.isPaidOff === 0);
 
-	// Spending Calculations
+	// ... rest of calculations ...
 	const currentMonthExpenses = expenses.filter((e) =>
 		e.date.startsWith(currentMonth),
 	);
@@ -153,7 +153,7 @@ export function Dashboard({
 		<Tabs defaultValue="spending" className="w-full space-y-6">
 			<div className="flex items-center justify-between px-1">
 				<div className="flex items-center gap-2">
-					<div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
+					<div className="h-8 w-8 rounded-lg bg-[#062163] flex items-center justify-center text-white">
 						<LayoutDashboard className="h-5 w-5" />
 					</div>
 					<h2 className="text-xl font-bold text-slate-900">Dashboard</h2>
@@ -162,13 +162,13 @@ export function Dashboard({
 				<TabsList className="bg-slate-100/80 p-1 rounded-xl h-10 border-none">
 					<TabsTrigger
 						value="spending"
-						className="rounded-lg px-4 h-8 text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm transition-all"
+						className="rounded-lg px-4 h-8 text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#062163] data-[state=active]:shadow-sm transition-all"
 					>
 						Spending
 					</TabsTrigger>
 					<TabsTrigger
 						value="wealth"
-						className="rounded-lg px-4 h-8 text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-indigo-600 data-[state=active]:shadow-sm transition-all"
+						className="rounded-lg px-4 h-8 text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#062163] data-[state=active]:shadow-sm transition-all"
 					>
 						Wealth
 					</TabsTrigger>
@@ -179,7 +179,7 @@ export function Dashboard({
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 					<div className="modern-card p-5 rounded-2xl lg:col-span-2">
 						<div className="flex items-center gap-3 mb-4">
-							<div className="h-9 w-9 rounded-xl gradient-purple flex items-center justify-center text-white shadow-sm">
+							<div className="h-9 w-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-sm">
 								<TrendingUp className="h-4 w-4" />
 							</div>
 							<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
@@ -196,14 +196,14 @@ export function Dashboard({
 								</span>
 							</div>
 							<span
-								className={`text-sm font-bold ${budgetUsedPercent > 100 ? "text-red-500" : budgetUsedPercent > 80 ? "text-orange-500" : "text-emerald-500"}`}
+								className={`text-sm font-bold ${budgetUsedPercent > 100 ? "text-red-500" : budgetUsedPercent > 80 ? "text-amber-500" : "text-emerald-500"}`}
 							>
 								{budgetUsedPercent.toFixed(0)}% used
 							</span>
 						</div>
 						<div className="relative h-2 w-full bg-slate-100 rounded-full overflow-hidden">
 							<div
-								className={`absolute left-0 top-0 h-full rounded-full transition-all duration-1000 ${budgetUsedPercent > 100 ? "bg-red-500" : budgetUsedPercent > 80 ? "bg-orange-400" : "bg-emerald-500"}`}
+								className={`absolute left-0 top-0 h-full rounded-full transition-all duration-1000 ${budgetUsedPercent > 100 ? "bg-red-500" : budgetUsedPercent > 80 ? "bg-amber-500" : "bg-emerald-500"}`}
 								style={{ width: `${Math.min(budgetUsedPercent, 100)}%` }}
 							/>
 						</div>
@@ -218,7 +218,7 @@ export function Dashboard({
 
 					<div className="modern-card p-5 rounded-2xl">
 						<div className="flex items-center gap-3 mb-4">
-							<div className="h-9 w-9 rounded-xl gradient-blue flex items-center justify-center text-white shadow-sm">
+							<div className="h-9 w-9 rounded-xl gradient-info flex items-center justify-center text-white shadow-sm">
 								<Repeat className="h-4 w-4" />
 							</div>
 							<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -263,12 +263,12 @@ export function Dashboard({
 											>
 												<stop
 													offset="5%"
-													stopColor="#6366f1"
+													stopColor="#062163"
 													stopOpacity={0.1}
 												/>
 												<stop
 													offset="95%"
-													stopColor="#6366f1"
+													stopColor="#062163"
 													stopOpacity={0}
 												/>
 											</linearGradient>
@@ -307,7 +307,7 @@ export function Dashboard({
 										<Area
 											type="monotone"
 											dataKey="amount"
-											stroke="#6366f1"
+											stroke="#062163"
 											strokeWidth={3}
 											fillOpacity={1}
 											fill="url(#colorAmount)"
@@ -413,8 +413,9 @@ export function Dashboard({
 			</TabsContent>
 
 			<TabsContent value="wealth" className="mt-0 space-y-6 outline-none">
-				<div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-6 text-white relative overflow-hidden">
+				<div className="bg-[#062163] rounded-3xl p-6 text-white relative overflow-hidden shadow-xl">
 					<div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+					<div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 					<div className="relative">
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-2">
@@ -435,7 +436,7 @@ export function Dashboard({
 							<p className="text-4xl font-black">{formatCurrency(netWorth)}</p>
 							{netWorthChange !== 0 && (
 								<div
-									className={`flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-bold ${netWorthChange >= 0 ? "bg-emerald-400/20" : "bg-red-400/20"}`}
+									className={`flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-bold ${netWorthChange >= 0 ? "bg-emerald-400/20" : "bg-rose-400/20"}`}
 								>
 									{netWorthChange >= 0 ? (
 										<ArrowUpRight className="h-4 w-4" />
@@ -447,20 +448,26 @@ export function Dashboard({
 							)}
 						</div>
 						<div className="grid grid-cols-3 gap-4">
-							<div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-								<p className="text-[10px] opacity-70 mb-1">Total Assets</p>
+							<div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+								<p className="text-[10px] opacity-70 mb-1 font-bold uppercase tracking-wider">
+									Total Assets
+								</p>
 								<p className="text-base font-bold">
 									{formatCurrency(totalAssets)}
 								</p>
 							</div>
-							<div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-								<p className="text-[10px] opacity-70 mb-1">Total Liabilities</p>
+							<div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+								<p className="text-[10px] opacity-70 mb-1 font-bold uppercase tracking-wider">
+									Total Liabilities
+								</p>
 								<p className="text-base font-bold">
 									{formatCurrency(totalLiabilities)}
 								</p>
 							</div>
-							<div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-								<p className="text-[10px] opacity-70 mb-1">Asset/Debt Ratio</p>
+							<div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+								<p className="text-[10px] opacity-70 mb-1 font-bold uppercase tracking-wider">
+									Asset/Debt Ratio
+								</p>
 								<p className="text-base font-bold">
 									{totalLiabilities > 0
 										? (totalAssets / totalLiabilities).toFixed(2)
@@ -473,7 +480,7 @@ export function Dashboard({
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-					<div className="bg-white border border-slate-100 rounded-2xl p-5">
+					<div className="modern-card p-5 rounded-2xl">
 						<div className="flex items-center gap-2 mb-3">
 							<div
 								className={`h-9 w-9 rounded-xl flex items-center justify-center ${emergencyFundMonths >= 6 ? "bg-emerald-50" : "bg-amber-50"}`}
@@ -492,7 +499,7 @@ export function Dashboard({
 						<div className="mt-2 flex items-center gap-2">
 							<div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
 								<div
-									className={`h-full rounded-full transition-all ${emergencyFundMonths >= 6 ? "bg-emerald-500" : "bg-amber-400"}`}
+									className={`h-full rounded-full transition-all ${emergencyFundMonths >= 6 ? "bg-emerald-500" : "bg-amber-500"}`}
 									style={{
 										width: `${Math.min((emergencyFundMonths / 6) * 100, 100)}%`,
 									}}
@@ -506,10 +513,10 @@ export function Dashboard({
 						</div>
 					</div>
 
-					<div className="bg-white border border-slate-100 rounded-2xl p-5">
+					<div className="modern-card p-5 rounded-2xl">
 						<div className="flex items-center gap-2 mb-3">
-							<div className="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center">
-								<TrendingUp className="h-5 w-5 text-emerald-500" />
+							<div className="h-9 w-9 rounded-xl bg-[#062163]/5 flex items-center justify-center">
+								<TrendingUp className="h-5 w-5 text-[#062163]" />
 							</div>
 							<span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
 								Assets
@@ -518,15 +525,15 @@ export function Dashboard({
 						<p className="text-2xl font-black text-slate-900">
 							{formatCurrency(totalAssets)}
 						</p>
-						<p className="text-[10px] text-slate-400 mt-1">
-							{assets.length} active holdings
+						<p className="text-[10px] text-slate-400 mt-1 font-bold">
+							{assets.length} ACTIVE HOLDINGS
 						</p>
 					</div>
 
-					<div className="bg-white border border-slate-100 rounded-2xl p-5">
+					<div className="modern-card p-5 rounded-2xl">
 						<div className="flex items-center gap-2 mb-3">
-							<div className="h-9 w-9 rounded-xl bg-red-50 flex items-center justify-center">
-								<Building2 className="h-5 w-5 text-red-500" />
+							<div className="h-9 w-9 rounded-xl bg-rose-50 flex items-center justify-center">
+								<Building2 className="h-5 w-5 text-rose-500" />
 							</div>
 							<span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
 								Liabilities
@@ -535,15 +542,15 @@ export function Dashboard({
 						<p className="text-2xl font-black text-slate-900">
 							{formatCurrency(totalLiabilities)}
 						</p>
-						<p className="text-[10px] text-slate-400 mt-1">
-							{activeLoans.length} active loans
+						<p className="text-[10px] text-slate-400 mt-1 font-bold">
+							{activeLoans.length} ACTIVE LOANS
 						</p>
 					</div>
 				</div>
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					<div className="bg-white border border-slate-100 rounded-2xl p-5">
-						<h3 className="text-sm font-bold text-slate-900 mb-4">
+					<div className="modern-card p-5 rounded-2xl">
+						<h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider opacity-60">
 							Net Worth Trend
 						</h3>
 						<div className="h-[250px]">
@@ -561,8 +568,8 @@ export function Dashboard({
 								>
 									<defs>
 										<linearGradient id="nwGrad" x1="0" y1="0" x2="0" y2="1">
-											<stop offset="5%" stopColor="#6366f1" stopOpacity={0.1} />
-											<stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+											<stop offset="5%" stopColor="#062163" stopOpacity={0.1} />
+											<stop offset="95%" stopColor="#062163" stopOpacity={0} />
 										</linearGradient>
 									</defs>
 									<CartesianGrid
@@ -574,26 +581,27 @@ export function Dashboard({
 										dataKey="date"
 										axisLine={false}
 										tickLine={false}
-										tick={{ fontSize: 10, fill: "#94a3b8" }}
+										tick={{ fontSize: 10, fill: "#94a3b8", fontWeight: "bold" }}
 									/>
 									<YAxis
 										axisLine={false}
 										tickLine={false}
-										tick={{ fontSize: 10, fill: "#94a3b8" }}
+										tick={{ fontSize: 10, fill: "#94a3b8", fontWeight: "bold" }}
 										tickFormatter={(v) => `₹${(v / 100000).toFixed(0)}L`}
 									/>
 									<Tooltip
 										contentStyle={{
-											borderRadius: "12px",
+											borderRadius: "16px",
 											border: "none",
-											boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+											boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
 											fontSize: "12px",
+											fontWeight: "bold",
 										}}
 									/>
 									<Area
 										type="monotone"
 										dataKey="netWorth"
-										stroke="#6366f1"
+										stroke="#062163"
 										strokeWidth={3}
 										fillOpacity={1}
 										fill="url(#nwGrad)"
@@ -603,68 +611,91 @@ export function Dashboard({
 						</div>
 					</div>
 
-					<div className="bg-white border border-slate-100 rounded-2xl p-5">
-						<h3 className="text-sm font-bold text-slate-900 mb-4">
+					<div className="modern-card p-5 rounded-2xl">
+						<h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider opacity-60">
 							Financial Health Summary
 						</h3>
-						<div className="space-y-4">
-							<div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+						<div className="space-y-3">
+							<div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
 								<div className="flex items-center gap-3">
-									<div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
-										<TrendingUp className="h-4 w-4 text-emerald-500" />
+									<div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+										<TrendingUp className="h-5 w-5 text-emerald-500" />
 									</div>
-									<span className="text-xs font-bold text-slate-600">
-										Growth
-									</span>
+									<div>
+										<span className="text-xs font-bold text-slate-400 uppercase block tracking-wider">
+											Growth
+										</span>
+										<span className="text-xs font-black text-slate-900 uppercase">
+											Monthly Trend
+										</span>
+									</div>
 								</div>
 								<span
-									className={`text-xs font-black ${netWorthChange >= 0 ? "text-emerald-500" : "text-red-500"}`}
+									className={`text-sm font-black px-3 py-1 rounded-lg ${netWorthChange >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
 								>
 									{netWorthChange >= 0 ? "+" : ""}
 									{netWorthChangePercent.toFixed(1)}%
 								</span>
 							</div>
-							<div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+
+							<div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
 								<div className="flex items-center gap-3">
-									<div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-										<Shield className="h-4 w-4 text-blue-500" />
+									<div className="h-10 w-10 rounded-xl bg-[#062163]/5 flex items-center justify-center">
+										<Shield className="h-5 w-5 text-[#062163]" />
 									</div>
-									<span className="text-xs font-bold text-slate-600">
-										Assets/Debt
-									</span>
+									<div>
+										<span className="text-xs font-bold text-slate-400 uppercase block tracking-wider">
+											Assets/Debt
+										</span>
+										<span className="text-xs font-black text-slate-900 uppercase">
+											Safety Ratio
+										</span>
+									</div>
 								</div>
-								<span className="text-xs font-black text-blue-500">
+								<span className="text-sm font-black text-[#062163] bg-[#062163]/5 px-3 py-1 rounded-lg">
 									{totalLiabilities > 0
 										? (totalAssets / totalLiabilities).toFixed(1)
-										: "Debt Free"}
+										: "DEBT FREE"}
 								</span>
 							</div>
-							<div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+
+							<div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
 								<div className="flex items-center gap-3">
-									<div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-										<PiggyBank className="h-4 w-4 text-purple-500" />
+									<div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center">
+										<PiggyBank className="h-5 w-5 text-amber-500" />
 									</div>
-									<span className="text-xs font-bold text-slate-600">
-										Emergency
-									</span>
+									<div>
+										<span className="text-xs font-bold text-slate-400 uppercase block tracking-wider">
+											Emergency
+										</span>
+										<span className="text-xs font-black text-slate-900 uppercase">
+											Coverage
+										</span>
+									</div>
 								</div>
 								<span
-									className={`text-xs font-black ${emergencyFundMonths >= 6 ? "text-emerald-500" : "text-amber-500"}`}
+									className={`text-sm font-black px-3 py-1 rounded-lg ${emergencyFundMonths >= 6 ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}
 								>
-									{emergencyFundMonths.toFixed(1)} months
+									{emergencyFundMonths.toFixed(1)} MONTHS
 								</span>
 							</div>
-							<div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+
+							<div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
 								<div className="flex items-center gap-3">
-									<div className="h-8 w-8 rounded-full bg-violet-100 flex items-center justify-center">
-										<Target className="h-4 w-4 text-violet-500" />
+									<div className="h-10 w-10 rounded-xl bg-violet-50 flex items-center justify-center">
+										<Target className="h-5 w-5 text-violet-500" />
 									</div>
-									<span className="text-xs font-bold text-slate-600">
-										Goals
-									</span>
+									<div>
+										<span className="text-xs font-bold text-slate-400 uppercase block tracking-wider">
+											Goals
+										</span>
+										<span className="text-xs font-black text-slate-900 uppercase">
+											Active Targets
+										</span>
+									</div>
 								</div>
-								<span className="text-xs font-black text-violet-500">
-									{goals.filter((g) => g.status === "active").length} Active
+								<span className="text-sm font-black text-violet-600 bg-violet-50 px-3 py-1 rounded-lg uppercase">
+									{goals.filter((g) => g.status === "active").length} ACTIVE
 								</span>
 							</div>
 						</div>

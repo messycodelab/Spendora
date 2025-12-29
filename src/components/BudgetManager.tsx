@@ -68,15 +68,21 @@ export function BudgetManager({
 	};
 
 	const getStatusColor = (percentage: number) => {
-		if (percentage >= 100) return "text-red-500";
-		if (percentage >= 80) return "text-orange-500";
+		if (percentage >= 100) return "text-rose-500";
+		if (percentage >= 80) return "text-amber-500";
 		return "text-emerald-500";
 	};
 
 	const getGradient = (percentage: number) => {
-		if (percentage >= 100) return "from-red-500 to-rose-500";
-		if (percentage >= 80) return "from-orange-400 to-red-400";
-		return "from-emerald-400 to-teal-500";
+		if (percentage >= 100) return "gradient-danger";
+		if (percentage >= 80) return "gradient-warning";
+		return "gradient-success";
+	};
+
+	const getBarColor = (percentage: number) => {
+		if (percentage >= 100) return "bg-rose-500";
+		if (percentage >= 80) return "bg-amber-500";
+		return "bg-emerald-500";
 	};
 
 	return (
@@ -138,7 +144,7 @@ export function BudgetManager({
 					</div>
 					<Button
 						type="submit"
-						className="w-full h-11 rounded-2xl gradient-purple text-white shadow-lg shadow-indigo-100 font-bold text-sm tracking-wide active:scale-[0.98] transition-all"
+						className="w-full h-11 rounded-2xl gradient-brand text-white shadow-lg shadow-indigo-100 font-bold text-sm tracking-wide active:scale-[0.98] transition-all"
 					>
 						Update Target
 					</Button>
@@ -163,7 +169,8 @@ export function BudgetManager({
 									budget.monthlyLimit,
 								);
 								const statusColor = getStatusColor(percentage);
-								const gradient = getGradient(percentage);
+								const gradientClass = getGradient(percentage);
+								const barColor = getBarColor(percentage);
 
 								return (
 									<div
@@ -173,7 +180,7 @@ export function BudgetManager({
 										<div className="flex items-center justify-between mb-3">
 											<div className="flex items-center gap-2.5">
 												<div
-													className={`h-7 w-7 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm shrink-0`}
+													className={`h-7 w-7 rounded-lg ${gradientClass} flex items-center justify-center text-white shadow-sm shrink-0`}
 												>
 													<CheckCircle2 className="h-3.5 w-3.5" />
 												</div>
@@ -191,7 +198,7 @@ export function BudgetManager({
 										<div className="space-y-2">
 											<div className="relative h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
 												<div
-													className={`absolute left-0 top-0 h-full bg-gradient-to-r ${gradient} transition-all duration-1000 ease-out rounded-full`}
+													className={`absolute left-0 top-0 h-full ${barColor} transition-all duration-1000 ease-out rounded-full`}
 													style={{ width: `${Math.min(percentage, 100)}%` }}
 												/>
 											</div>

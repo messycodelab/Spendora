@@ -101,20 +101,20 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 	}, 0);
 
 	const frequencyColors = {
-		daily: "from-rose-400 to-pink-500",
-		weekly: "from-orange-400 to-amber-500",
-		monthly: "from-indigo-400 to-blue-500",
-		yearly: "from-emerald-400 to-teal-500",
+		daily: "gradient-danger",
+		weekly: "gradient-warning",
+		monthly: "gradient-brand",
+		yearly: "gradient-success",
 	};
 
 	return (
 		<div className="space-y-8">
 			<div className="flex items-center justify-between px-2">
 				<div>
-					<h2 className="text-lg font-bold text-slate-900">
+					<h2 className="text-lg font-bold text-slate-900 tracking-tight">
 						Automatic Subscriptions
 					</h2>
-					<p className="text-xs text-slate-400 font-medium">
+					<p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">
 						Tracking your repetitive commitments
 					</p>
 				</div>
@@ -123,19 +123,19 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 
 			<div className="grid lg:grid-cols-3 gap-8">
 				<div className="lg:col-span-1">
-					<div className="gradient-purple p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
+					<div className="gradient-brand p-8 rounded-[2.5rem] text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
 						<div className="relative z-10">
 							<div className="bg-white/20 h-12 w-12 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md">
 								<TrendingUp className="h-6 w-6" />
 							</div>
-							<p className="text-indigo-100 text-xs font-bold uppercase tracking-widest mb-1">
+							<p className="text-indigo-100 text-[10px] font-black uppercase tracking-widest mb-1">
 								Monthly Committed
 							</p>
 							<h3 className="text-3xl font-black tracking-tighter mb-2">
 								{formatCurrency(totalMonthlyRecurring)}
 							</h3>
-							<p className="text-indigo-200/60 text-[10px] font-medium leading-relaxed">
-								Aggregated based on daily, weekly, and annual cycles.
+							<p className="text-indigo-200/60 text-[10px] font-bold leading-relaxed uppercase tracking-wider">
+								Aggregated across all cycles
 							</p>
 						</div>
 						<Repeat className="absolute -right-8 -bottom-8 h-40 w-40 text-white/5 group-hover:rotate-45 transition-transform duration-1000" />
@@ -144,11 +144,11 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 
 				<div className="lg:col-span-2">
 					{recurringExpenses.length === 0 ? (
-						<div className="text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-100">
-							<div className="bg-white h-16 w-16 rounded-3xl flex items-center justify-center shadow-sm mx-auto mb-4">
-								<Clock className="h-8 w-8 text-slate-100" />
+						<div className="modern-card py-20 rounded-[2rem] border-dashed text-center">
+							<div className="h-16 w-16 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-4 text-slate-200">
+								<Clock className="h-8 w-8" />
 							</div>
-							<p className="text-slate-400 text-sm font-medium">
+							<p className="text-slate-400 text-sm font-bold uppercase tracking-widest">
 								No recurring items configured
 							</p>
 						</div>
@@ -179,9 +179,9 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 													<CategoryIcon className="h-3.5 w-3.5" />
 												</div>
 												<div
-													className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-gradient-to-br ${frequencyGradient} flex items-center justify-center border-2 border-white`}
+													className={`absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full ${frequencyGradient} flex items-center justify-center border-2 border-white`}
 												>
-													<Repeat className="h-1.5 w-1.5 text-white" />
+													<Repeat className="h-2 w-2 text-white" />
 												</div>
 											</div>
 
@@ -192,7 +192,7 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 												</h4>
 												<div className="flex items-center gap-2 flex-wrap">
 													<span
-														className={`text-[9px] font-bold uppercase tracking-wider ${categoryInfo.text}`}
+														className={`text-[9px] font-black uppercase tracking-widest ${categoryInfo.text}`}
 													>
 														{expense.category}
 													</span>
@@ -205,14 +205,14 @@ export function RecurringExpenses({ expenses }: RecurringExpensesProps) {
 
 										<div className="space-y-2 pt-2 border-t border-slate-50">
 											<div className="flex items-center justify-between">
-												<div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500">
-													<Calendar className="h-2.5 w-2.5" />
-													<span className="text-slate-600">
+												<div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
+													<Calendar className="h-3 w-3" />
+													<span>
 														{formatDate(expense.recurringDetails?.nextDate || "")}
 													</span>
 												</div>
 												<div className="text-right">
-													<div className="text-sm font-black text-slate-900 leading-tight">
+													<div className="text-sm font-black text-slate-900 leading-tight tracking-tight">
 														{formatCurrency(expense.amount)}
 													</div>
 													<p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
