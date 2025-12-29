@@ -16,11 +16,26 @@ import {
 	deleteLoan,
 	getLoanPayments,
 	addLoanPayment,
+	getAllAssets,
+	addAsset,
+	updateAsset,
+	deleteAsset,
+	getAssetValueHistory,
+	getAssetsByGoal,
+	getAllGoals,
+	addGoal,
+	updateGoal,
+	deleteGoal,
+	getNetWorthHistory,
+	calculateCurrentNetWorth,
+	recordNetWorthSnapshot,
 	migrateFromJSON,
 	type Expense,
 	type Budget,
 	type Loan,
 	type LoanPayment,
+	type Asset,
+	type Goal,
 } from "./database";
 
 let mainWindow: BrowserWindow | null = null;
@@ -100,7 +115,8 @@ app.on("before-quit", () => {
 	closeDatabase();
 });
 
-// IPC Handlers
+// ==================== EXPENSE IPC HANDLERS ====================
+
 ipcMain.handle("get-expenses", () => {
 	try {
 		return getAllExpenses();
@@ -127,6 +143,8 @@ ipcMain.handle("delete-expense", (_event, id: string) => {
 		return false;
 	}
 });
+
+// ==================== BUDGET IPC HANDLERS ====================
 
 ipcMain.handle("get-budgets", () => {
 	try {
@@ -155,7 +173,8 @@ ipcMain.handle("get-recurring-expenses", () => {
 	}
 });
 
-// Loan Handlers
+// ==================== LOAN IPC HANDLERS ====================
+
 ipcMain.handle("get-loans", () => {
 	try {
 		return getAllLoans();
@@ -206,6 +225,135 @@ ipcMain.handle("add-loan-payment", (_event, payment: LoanPayment) => {
 		return addLoanPayment(payment);
 	} catch (error) {
 		console.error("Error adding loan payment:", error);
+		throw error;
+	}
+});
+
+// ==================== ASSET IPC HANDLERS ====================
+
+ipcMain.handle("get-assets", () => {
+	try {
+		return getAllAssets();
+	} catch (error) {
+		console.error("Error getting assets:", error);
+		return [];
+	}
+});
+
+ipcMain.handle("add-asset", (_event, asset: Asset) => {
+	try {
+		return addAsset(asset);
+	} catch (error) {
+		console.error("Error adding asset:", error);
+		throw error;
+	}
+});
+
+ipcMain.handle("update-asset", (_event, id: string, updates: Partial<Asset>) => {
+	try {
+		return updateAsset(id, updates);
+	} catch (error) {
+		console.error("Error updating asset:", error);
+		throw error;
+	}
+});
+
+ipcMain.handle("delete-asset", (_event, id: string) => {
+	try {
+		return deleteAsset(id);
+	} catch (error) {
+		console.error("Error deleting asset:", error);
+		return false;
+	}
+});
+
+ipcMain.handle("get-asset-value-history", (_event, assetId: string) => {
+	try {
+		return getAssetValueHistory(assetId);
+	} catch (error) {
+		console.error("Error getting asset value history:", error);
+		return [];
+	}
+});
+
+ipcMain.handle("get-assets-by-goal", (_event, goalId: string) => {
+	try {
+		return getAssetsByGoal(goalId);
+	} catch (error) {
+		console.error("Error getting assets by goal:", error);
+		return [];
+	}
+});
+
+// ==================== GOAL IPC HANDLERS ====================
+
+ipcMain.handle("get-goals", () => {
+	try {
+		return getAllGoals();
+	} catch (error) {
+		console.error("Error getting goals:", error);
+		return [];
+	}
+});
+
+ipcMain.handle("add-goal", (_event, goal: Goal) => {
+	try {
+		return addGoal(goal);
+	} catch (error) {
+		console.error("Error adding goal:", error);
+		throw error;
+	}
+});
+
+ipcMain.handle("update-goal", (_event, id: string, updates: Partial<Goal>) => {
+	try {
+		return updateGoal(id, updates);
+	} catch (error) {
+		console.error("Error updating goal:", error);
+		throw error;
+	}
+});
+
+ipcMain.handle("delete-goal", (_event, id: string) => {
+	try {
+		return deleteGoal(id);
+	} catch (error) {
+		console.error("Error deleting goal:", error);
+		return false;
+	}
+});
+
+// ==================== NET WORTH IPC HANDLERS ====================
+
+ipcMain.handle("get-net-worth-history", () => {
+	try {
+		return getNetWorthHistory();
+	} catch (error) {
+		console.error("Error getting net worth history:", error);
+		return [];
+	}
+});
+
+ipcMain.handle("calculate-net-worth", () => {
+	try {
+		return calculateCurrentNetWorth();
+	} catch (error) {
+		console.error("Error calculating net worth:", error);
+		return {
+			totalAssets: 0,
+			totalLiabilities: 0,
+			netWorth: 0,
+			assetsBreakdown: {},
+			liabilitiesBreakdown: {},
+		};
+	}
+});
+
+ipcMain.handle("record-net-worth-snapshot", () => {
+	try {
+		return recordNetWorthSnapshot();
+	} catch (error) {
+		console.error("Error recording net worth snapshot:", error);
 		throw error;
 	}
 });

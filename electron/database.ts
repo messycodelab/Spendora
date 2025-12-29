@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 import * as path from "path";
 import * as fs from "fs";
 import * as schema from "./schema";
@@ -9,16 +9,33 @@ import {
 	budgets,
 	loans,
 	loanPayments,
+	assets,
+	assetValueHistory,
+	goals,
+	netWorthHistory,
 	type Expense,
 	type Budget,
 	type Loan,
 	type LoanPayment,
+	type Asset,
+	type AssetValueHistory,
+	type Goal,
+	type NetWorthHistory,
 } from "./schema";
 
 let db: ReturnType<typeof drizzle> | null = null;
 let sqlite: Database.Database | null = null;
 
-export type { Expense, Budget, Loan, LoanPayment };
+export type {
+	Expense,
+	Budget,
+	Loan,
+	LoanPayment,
+	Asset,
+	AssetValueHistory,
+	Goal,
+	NetWorthHistory,
+};
 
 export function initDatabase(dbPath: string): ReturnType<typeof drizzle> {
 	// Ensure directory exists
@@ -104,6 +121,65 @@ function createTables(database: Database.Database): void {
     );
   `);
 
+	// Create assets table
+	database.exec(`
+    CREATE TABLE IF NOT EXISTS assets (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('stocks', 'mutual_funds', 'etf', 'gold_physical', 'gold_digital', 'real_estate', 'land', 'cash', 'fd', 'rd', 'esop', 'private_equity', 'ppf', 'epf', 'nps', 'bonds', 'crypto', 'other')),
+      invested_amount REAL NOT NULL,
+      current_value REAL NOT NULL,
+      units REAL,
+      purchase_date TEXT NOT NULL,
+      last_updated TEXT NOT NULL,
+      notes TEXT,
+      linked_goal_id TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+	// Create asset_value_history table
+	database.exec(`
+    CREATE TABLE IF NOT EXISTS asset_value_history (
+      id TEXT PRIMARY KEY,
+      asset_id TEXT NOT NULL,
+      value REAL NOT NULL,
+      date TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(asset_id) REFERENCES assets(id) ON DELETE CASCADE
+    );
+  `);
+
+	// Create goals table
+	database.exec(`
+    CREATE TABLE IF NOT EXISTS goals (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('house', 'car', 'retirement', 'travel', 'education', 'wedding', 'emergency_fund', 'other')),
+      target_amount REAL NOT NULL,
+      current_amount REAL NOT NULL DEFAULT 0,
+      target_date TEXT NOT NULL,
+      priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('high', 'medium', 'low')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'completed', 'paused')),
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+	// Create net_worth_history table
+	database.exec(`
+    CREATE TABLE IF NOT EXISTS net_worth_history (
+      id TEXT PRIMARY KEY,
+      date TEXT NOT NULL,
+      total_assets REAL NOT NULL,
+      total_liabilities REAL NOT NULL,
+      net_worth REAL NOT NULL,
+      assets_breakdown TEXT,
+      liabilities_breakdown TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
 	// Create indexes for better query performance
 	database.exec(`
     CREATE INDEX IF NOT EXISTS idx_expenses_date ON expenses(date);
@@ -114,6 +190,12 @@ function createTables(database: Database.Database): void {
     CREATE INDEX IF NOT EXISTS idx_loans_type ON loans(type);
     CREATE INDEX IF NOT EXISTS idx_loan_payments_loan_id ON loan_payments(loan_id);
     CREATE INDEX IF NOT EXISTS idx_loan_payments_date ON loan_payments(date);
+    CREATE INDEX IF NOT EXISTS idx_assets_type ON assets(type);
+    CREATE INDEX IF NOT EXISTS idx_assets_linked_goal ON assets(linked_goal_id);
+    CREATE INDEX IF NOT EXISTS idx_asset_value_history_asset_id ON asset_value_history(asset_id);
+    CREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);
+    CREATE INDEX IF NOT EXISTS idx_goals_type ON goals(type);
+    CREATE INDEX IF NOT EXISTS idx_net_worth_history_date ON net_worth_history(date);
   `);
 }
 
@@ -398,6 +480,250 @@ export function setBudget(budget: Omit<Budget, "createdAt">): Budget {
 
 		return inserted;
 	}
+}
+
+// ==================== ASSET OPERATIONS ====================
+
+export function getAllAssets(): Asset[] {
+	const database = getDatabase();
+	return database
+		.select()
+		.from(assets)
+		.orderBy(desc(assets.currentValue))
+		.all();
+}
+
+export function addAsset(asset: Omit<Asset, "createdAt">): Asset {
+	const database = getDatabase();
+	database.insert(assets).values(asset).run();
+
+	// Also add to value history
+	database
+		.insert(assetValueHistory)
+		.values({
+			id: `${asset.id}-${Date.now()}`,
+			assetId: asset.id,
+			value: asset.currentValue,
+			date: asset.lastUpdated,
+		})
+		.run();
+
+	const inserted = database
+		.select()
+		.from(assets)
+		.where(eq(assets.id, asset.id))
+		.get();
+
+	if (!inserted) {
+		throw new Error("Failed to insert asset");
+	}
+
+	return inserted;
+}
+
+export function updateAsset(
+	id: string,
+	updates: Partial<Omit<Asset, "id" | "createdAt">>,
+): Asset {
+	const database = getDatabase();
+
+	// If current value is being updated, add to history
+	if (updates.currentValue !== undefined) {
+		const today = new Date().toISOString().slice(0, 10);
+		database
+			.insert(assetValueHistory)
+			.values({
+				id: `${id}-${Date.now()}`,
+				assetId: id,
+				value: updates.currentValue,
+				date: today,
+			})
+			.run();
+		updates.lastUpdated = today;
+	}
+
+	database.update(assets).set(updates).where(eq(assets.id, id)).run();
+
+	const updated = database.select().from(assets).where(eq(assets.id, id)).get();
+
+	if (!updated) {
+		throw new Error("Failed to update asset");
+	}
+
+	return updated;
+}
+
+export function deleteAsset(id: string): boolean {
+	const database = getDatabase();
+	database.delete(assets).where(eq(assets.id, id)).run();
+	return true;
+}
+
+export function getAssetValueHistory(assetId: string): AssetValueHistory[] {
+	const database = getDatabase();
+	return database
+		.select()
+		.from(assetValueHistory)
+		.where(eq(assetValueHistory.assetId, assetId))
+		.orderBy(desc(assetValueHistory.date))
+		.all();
+}
+
+export function getAssetsByGoal(goalId: string): Asset[] {
+	const database = getDatabase();
+	return database
+		.select()
+		.from(assets)
+		.where(eq(assets.linkedGoalId, goalId))
+		.all();
+}
+
+// ==================== GOAL OPERATIONS ====================
+
+export function getAllGoals(): Goal[] {
+	const database = getDatabase();
+	return database
+		.select()
+		.from(goals)
+		.orderBy(desc(goals.priority), desc(goals.targetDate))
+		.all();
+}
+
+export function addGoal(goal: Omit<Goal, "createdAt">): Goal {
+	const database = getDatabase();
+	database.insert(goals).values(goal).run();
+
+	const inserted = database
+		.select()
+		.from(goals)
+		.where(eq(goals.id, goal.id))
+		.get();
+
+	if (!inserted) {
+		throw new Error("Failed to insert goal");
+	}
+
+	return inserted;
+}
+
+export function updateGoal(
+	id: string,
+	updates: Partial<Omit<Goal, "id" | "createdAt">>,
+): Goal {
+	const database = getDatabase();
+	database.update(goals).set(updates).where(eq(goals.id, id)).run();
+
+	const updated = database.select().from(goals).where(eq(goals.id, id)).get();
+
+	if (!updated) {
+		throw new Error("Failed to update goal");
+	}
+
+	return updated;
+}
+
+export function deleteGoal(id: string): boolean {
+	const database = getDatabase();
+	// Unlink any assets linked to this goal
+	database
+		.update(assets)
+		.set({ linkedGoalId: null })
+		.where(eq(assets.linkedGoalId, id))
+		.run();
+	database.delete(goals).where(eq(goals.id, id)).run();
+	return true;
+}
+
+// ==================== NET WORTH OPERATIONS ====================
+
+export function getNetWorthHistory(): NetWorthHistory[] {
+	const database = getDatabase();
+	return database
+		.select()
+		.from(netWorthHistory)
+		.orderBy(desc(netWorthHistory.date))
+		.all();
+}
+
+export function addNetWorthSnapshot(
+	snapshot: Omit<NetWorthHistory, "createdAt">,
+): NetWorthHistory {
+	const database = getDatabase();
+	database.insert(netWorthHistory).values(snapshot).run();
+
+	const inserted = database
+		.select()
+		.from(netWorthHistory)
+		.where(eq(netWorthHistory.id, snapshot.id))
+		.get();
+
+	if (!inserted) {
+		throw new Error("Failed to insert net worth snapshot");
+	}
+
+	return inserted;
+}
+
+export function calculateCurrentNetWorth(): {
+	totalAssets: number;
+	totalLiabilities: number;
+	netWorth: number;
+	assetsBreakdown: Record<string, number>;
+	liabilitiesBreakdown: Record<string, number>;
+} {
+	const database = getDatabase();
+
+	// Get all assets
+	const allAssets = database.select().from(assets).all();
+	const totalAssets = allAssets.reduce((sum, a) => sum + a.currentValue, 0);
+
+	// Group assets by type
+	const assetsBreakdown: Record<string, number> = {};
+	allAssets.forEach((asset) => {
+		assetsBreakdown[asset.type] =
+			(assetsBreakdown[asset.type] || 0) + asset.currentValue;
+	});
+
+	// Get all loans (liabilities)
+	const allLoans = database
+		.select()
+		.from(loans)
+		.where(eq(loans.isPaidOff, 0))
+		.all();
+	const totalLiabilities = allLoans.reduce(
+		(sum, l) => sum + l.remainingPrincipal,
+		0,
+	);
+
+	// Group liabilities by type
+	const liabilitiesBreakdown: Record<string, number> = {};
+	allLoans.forEach((loan) => {
+		liabilitiesBreakdown[loan.type] =
+			(liabilitiesBreakdown[loan.type] || 0) + loan.remainingPrincipal;
+	});
+
+	return {
+		totalAssets,
+		totalLiabilities,
+		netWorth: totalAssets - totalLiabilities,
+		assetsBreakdown,
+		liabilitiesBreakdown,
+	};
+}
+
+export function recordNetWorthSnapshot(): NetWorthHistory {
+	const netWorth = calculateCurrentNetWorth();
+	const today = new Date().toISOString().slice(0, 10);
+
+	return addNetWorthSnapshot({
+		id: `nw-${Date.now()}`,
+		date: today,
+		totalAssets: netWorth.totalAssets,
+		totalLiabilities: netWorth.totalLiabilities,
+		netWorth: netWorth.netWorth,
+		assetsBreakdown: JSON.stringify(netWorth.assetsBreakdown),
+		liabilitiesBreakdown: JSON.stringify(netWorth.liabilitiesBreakdown),
+	});
 }
 
 // Migration utility - import from JSON
