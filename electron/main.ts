@@ -70,16 +70,23 @@ function setupDatabase() {
 	}
 }
 
+const iconPath = path.join(__dirname, "../public/favicon.png");
+
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 1200,
 		height: 800,
+		icon: iconPath,
 		webPreferences: {
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: path.join(__dirname, "preload.js"),
 		},
 	});
+
+	if (process.platform === "darwin") {
+		app.dock.setIcon(iconPath);
+	}
 
 	if (isDev) {
 		mainWindow.loadURL("http://localhost:5173");
